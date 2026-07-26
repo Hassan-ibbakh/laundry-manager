@@ -145,14 +145,15 @@
             </table>
         </div>
         <div class="px-6 py-3 border-t text-xs text-gray-400">
-            Affichage des <?php echo e($orders->count()); ?> derniers
+            عرض آخر <?php echo e($orders->count()); ?>
+
         </div>
     </div>
 
     
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b">
-            <h3 class="font-semibold text-gray-700">👤 Clients récents</h3>
+            <h3 class="font-semibold text-gray-700">👤 العملاء الجدد</h3>
             <p class="text-xs text-gray-400">5 derniers clients</p>
         </div>
         <div class="p-4 space-y-3 max-h-80 overflow-y-auto">
@@ -167,14 +168,14 @@
             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 <div class="text-center py-6 text-gray-400">
                     <div class="text-3xl mb-2">👤</div>
-                    <p class="text-sm">Aucun client enregistré</p>
+                    <p class="text-sm">لا يوجد عملاء بعد</p>
                 </div>
             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
         </div>
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($recentClients->count() > 0): ?>
             <div class="px-5 py-2 border-t">
                 <a href="<?php echo e(route('laundry.clients.index')); ?>" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
-                    Voir tous les clients →
+                    عرض جميع العملاء →
                 </a>
             </div>
         <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>

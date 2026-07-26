@@ -1,17 +1,17 @@
 
-<?php $__env->startSection('title', 'Gestion des blanchisseries'); ?>
+<?php $__env->startSection('title', 'إدارة المغاسل'); ?>
 <?php $__env->startSection('content'); ?>
 
 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
     <!-- En-tête -->
     <div class="px-6 py-4 border-b flex flex-wrap items-center justify-between gap-4">
         <div>
-            <h2 class="text-xl font-bold text-gray-800">🏪 Gestion des blanchisseries</h2>
-            <p class="text-sm text-gray-500 mt-1">Liste de toutes les blanchisseries enregistrées</p>
+            <h2 class="text-xl font-bold text-gray-800">🏪 إدارة المغاسل</h2>
+            <p class="text-sm text-gray-500 mt-1">قائمة جميع المغاسل المسجلة</p>
         </div>
         <a href="<?php echo e(route('admin.laundries.create')); ?>"
            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-            + Ajouter une blanchisserie
+            + إضافة مغسلة
         </a>
     </div>
 
@@ -19,11 +19,11 @@
     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($laundries->isEmpty()): ?>
         <div class="text-center py-16">
             <div class="text-7xl mb-4">🏪</div>
-            <p class="text-gray-500 text-lg font-medium">Aucune blanchisserie enregistrée</p>
-            <p class="text-gray-400 text-sm mt-1">Commencez par créer votre première blanchisserie</p>
+            <p class="text-gray-500 text-lg font-medium">لا توجد مغاسل مسجلة</p>
+            <p class="text-gray-400 text-sm mt-1">ابدأ بإنشاء أول مغسلة</p>
             <a href="<?php echo e(route('admin.laundries.create')); ?>" 
                class="inline-block mt-4 text-blue-600 hover:text-blue-800 font-medium">
-                Créer la première blanchisserie →
+                إنشاء أول مغسلة →
             </a>
         </div>
     <?php else: ?>
@@ -31,11 +31,11 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-50/80 border-b">
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الاسم</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الهاتف</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
@@ -60,12 +60,12 @@
                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($laundry->is_active): ?>
                                 <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                    Actif
+                                    نشط
                                 </span>
                             <?php else: ?>
                                 <span class="inline-flex items-center gap-1 bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-medium">
                                     <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
-                                    Inactif
+                                    غير نشط
                                 </span>
                             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         </td>
@@ -73,16 +73,16 @@
                             <div class="flex items-center gap-2">
                                 <a href="<?php echo e(route('admin.laundries.edit', $laundry->id)); ?>"
                                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
-                                    ✏️ Modifier
+                                    ✏️ تعديل
                                 </a>
                                 <span class="text-gray-300">|</span>
                                 <form method="POST" action="<?php echo e(route('admin.laundries.destroy', $laundry->id)); ?>"
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette blanchisserie ?')" 
+                                      onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذه المغسلة؟')" 
                                       class="inline">
                                     <?php echo csrf_field(); ?> 
                                     <?php echo method_field('DELETE'); ?>
                                     <button type="submit" class="text-red-600 hover:text-red-800 text-sm font-medium transition-colors">
-                                        🗑️ Supprimer
+                                        🗑️ حذف
                                     </button>
                                 </form>
                             </div>
@@ -103,7 +103,7 @@
         
         <!-- Total -->
         <div class="px-6 py-3 text-xs text-gray-400 border-t">
-            Total : <?php echo e($laundries->total()); ?> blanchisserie(s)
+            الإجمالي: <?php echo e($laundries->total()); ?> مغسلة
         </div>
     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 </div>

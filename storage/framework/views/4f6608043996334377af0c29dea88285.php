@@ -30,11 +30,11 @@
         <div class="absolute left-0 right-0 top-1/2 h-1 bg-gray-200 -translate-y-1/2 z-0">
             <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-500" style="width: 0%;"></div>
         </div>
-        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = ['client' => '👤', 'items' => '🧾', 'review' => '✅']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $step => $icon): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__currentLoopData = ['👤 العميل', ' الأغراض', ' المراجعة']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $stepLabel): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
             <div class="flex flex-col items-center z-10">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm transition-colors duration-300 step-indicator"
                      data-step="<?php echo e($loop->index); ?>"><?php echo e($loop->iteration); ?></div>
-                <span class="text-xs text-gray-500 mt-1 capitalize"><?php echo e($step); ?></span>
+                <span class="text-xs text-gray-500 mt-1"><?php echo e($stepLabel); ?></span>
             </div>
         <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
     </div>
@@ -211,7 +211,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ----- ÉTAPES -----
+    // ----- الخطوات -----
     const steps = document.querySelectorAll('.step-content');
     const indicators = document.querySelectorAll('.step-indicator');
     const progressBar = document.getElementById('progress-bar');
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('itemsJson').value = JSON.stringify(cart);
     }
 
-    // Ajout d'article
+    // إضافة قطعة
     document.getElementById('addItemBtn').addEventListener('click', function() {
         const service = document.getElementById('itemService').value;
         const type = document.getElementById('itemType').value.trim();
@@ -287,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('itemPrice').value = '';
     });
 
-    // ----- RECHERCHE CLIENT -----
+    // ----- بحث العميل -----
     const searchInput = document.getElementById('clientSearch');
     const suggestions = document.getElementById('suggestions');
     const selectedDisplay = document.getElementById('selectedClientDisplay');
@@ -301,19 +301,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const clientNameInput = document.getElementById('client_name');
     const clientPhoneInput = document.getElementById('client_phone');
 
-    // Empêcher la touche "Entrée" de soumettre le formulaire, PARTOUT dans le formulaire
-    // (pas seulement sur le champ de recherche) — évite toute soumission accidentelle
+    // منع زر "Enter" من إرسال النموذج في جميع الحقول
+    // (ليس فقط في حقل البحث) — يمنع الإرسال غير المقصود
     document.getElementById('orderForm').addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && e.target.id !== 'submitBtn') {
             e.preventDefault();
         }
     });
 
-    // ----- ÉTAT CLIENT : une seule source de vérité -----
-    // mode: 'none' | 'existing' | 'new'
+    // ----- حالة العميل: مصدر واحد للحقيقة -----
+    // الوضع: 'none' | 'existing' | 'new'
     function setClientMode(mode) {
         if (mode === 'existing') {
-            // On efface les champs "nouveau client" pour ne jamais envoyer les deux à la fois
+            // نمسح حقول العميل الجديد حتى لا يُرسل الوضعان معاً
             clientNameInput.value = '';
             clientPhoneInput.value = '';
             newClientFields.classList.add('hidden');
@@ -366,8 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             const div = document.createElement('div');
                             div.className = 'suggestion-item flex justify-between items-center';
                             div.innerHTML = `<span class="name">${client.name}</span><span class="phone">${client.phone}</span>`;
-                            // mousedown (et non click) : s'exécute AVANT le blur de l'input,
-                            // ce qui évite toute course d'événements qui ferait revenir en arrière la sélection
+                            // mousedown (وليس click) : يعمل قبل فقدان التركيز للمدخل،
+                            // مما يمنع سباق الأحداث الذي قد يلغي الاختيار
                             div.addEventListener('mousedown', function(e) {
                                 e.preventDefault();
                                 e.stopPropagation();
@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
 
-    // Fermer les suggestions seulement si on clique EN DEHORS de tout élément client
+    // إغلاق الاقتراحات فقط عند النقر خارج أي عنصر عميل
     document.addEventListener('click', function(e) {
         const isClickOnSuggestion = suggestions.contains(e.target);
         const isClickOnSearchInput = e.target === searchInput;
@@ -394,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isClickOnSuggestion && !isClickOnSearchInput && !isClickOnSelectedDisplay) {
             suggestions.classList.add('hidden');
         }
-    }, true); // Utiliser la capture au lieu de la bubbling pour plus de contrôle
+    }, true); // استخدام التقاط الحدث بدلاً من الفقاعية للتحكم الأفضل
 
     newClientToggle.addEventListener('click', function() {
         if (newClientFields.classList.contains('hidden')) {
@@ -404,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ----- NAVIGATION -----
+    // ----- التنقل -----
     function goToStep(step) {
         if (step < 0 || step >= totalSteps) return;
         if (step === 1 && currentStep === 0) {
@@ -412,8 +412,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const clientName = clientNameInput.value.trim();
             const clientPhone = clientPhoneInput.value.trim();
 
-            // Un seul mode doit être valide à la fois : soit un client existant (id),
-            // soit un nouveau client complet (nom ET téléphone). Jamais les deux, jamais partiel.
+            // يجب أن يكون وضع واحد فقط صالحاً: إما عميل موجود (id)،
+            // أو عميل جديد مكتمل (الاسم والهاتف). لا يمكن أن يكون كلاهما أو جزءياً.
             const hasExisting = clientId.length > 0;
             const hasNew = clientName.length > 0 && clientPhone.length > 0;
 
@@ -481,24 +481,23 @@ document.addEventListener('DOMContentLoaded', function() {
     nextBtn.addEventListener('click', () => goToStep(currentStep + 1));
     prevBtn.addEventListener('click', () => goToStep(currentStep - 1));
 
-    // ----- SOUMISSION NATIVE DU FORMULAIRE (pas de fetch/AJAX) -----
-    // Verrou anti-double-soumission : bloque toute tentative d'envoi tant qu'une
-    // soumission est déjà en cours (double-clic, touche Entrée, double événement
-    // 'submit', etc.). Combiné à submitBtn.disabled et au verrou côté serveur
-    // (transaction + lockForUpdate dans OrderController::store).
+    // ----- إرسال النموذج عبر الطريقة التقليدية (بدون fetch/AJAX) -----
+    // قفل ضد الإرسال المزدوج: يمنع أي محاولة إرسال جديدة أثناء وجود
+    // إرسال جارٍ بالفعل (نقرة مزدوجة، زر Enter، حدث 'submit' مزدوج، إلخ).
+    // هذا مكمل لتعطيل الزر ولقفل الخادم في OrderController::store.
     let isSubmitting = false;
 
     const orderForm = document.getElementById('orderForm');
     if (orderForm) {
         orderForm.addEventListener('submit', function(e) {
 
-            // Déjà en cours d'envoi : on bloque toute nouvelle tentative
+            // إذا كان الإرسال جارياً بالفعل: نوقف أي محاولة جديدة
             if (isSubmitting) {
                 e.preventDefault();
                 return;
             }
 
-            // Validation finale : client (existant OU nouveau, jamais les deux/aucun)
+            // التحقق النهائي: عميل (موجود أو جديد، وليس كلاهما أو لا أحد)
             const clientId = clientIdInput.value.trim();
             const clientName = clientNameInput.value.trim();
             const clientPhone = clientPhoneInput.value.trim();
@@ -512,13 +511,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Ne jamais envoyer les deux modes en même temps
+            // لا ترسل الوضعين معاً
             if (hasExisting) {
                 clientNameInput.value = '';
                 clientPhoneInput.value = '';
             }
 
-            // Au moins un article dans le panier
+            // يجب أن تحتوي العربة على قطعة واحدة على الأقل
             if (cart.length === 0) {
                 e.preventDefault();
                 alert('الرجاء إضافة قطعة واحدة على الأقل.');
@@ -528,8 +527,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Synchroniser le panier dans le champ caché avant l'envoi
             document.getElementById('itemsJson').value = JSON.stringify(cart);
 
-            // Tout est valide : on laisse le formulaire se soumettre normalement
-            // (PAS de e.preventDefault() ici -> POST HTML classique + redirect Laravel)
+            // أصبح كل شيء صالحاً: نسمح بإرسال النموذج بالطريقة العادية
+            // (لا يوجد e.preventDefault() هنا -> POST عادي + إعادة توجيه Laravel)
             isSubmitting = true;
             submitBtn.disabled = true;
             submitBtn.textContent = '... جاري الإنشاء';
@@ -559,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             oldItems = JSON.parse(oldItemsRaw);
         } catch (error) {
-            console.warn('Impossible de parser les items anciens:', error, oldItemsRaw);
+            console.warn('تعذر تحليل عناصر الطلب السابقة:', error, oldItemsRaw);
             oldItems = [];
         }
     }
