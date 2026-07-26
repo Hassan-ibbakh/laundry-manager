@@ -29,17 +29,36 @@
             </span>
         </div>
 
+        {{-- Informations client --}}
         <div class="grid grid-cols-2 gap-4 text-sm mb-6">
             <div><p class="text-gray-400">العميل</p><p class="font-medium">{{ $order->client->name }}</p></div>
             <div><p class="text-gray-400">الهاتف</p><p class="font-medium">{{ $order->client->phone }}</p></div>
-            <div><p class="text-gray-400">الخدمة</p><p class="font-medium">{{ $order->service }}</p></div>
-            <div><p class="text-gray-400">عدد القطع</p><p class="font-medium">{{ $order->pieces_count }}</p></div>
-            <div><p class="text-gray-400">نوع القطع</p><p class="font-medium">{{ $order->pieces_type }}</p></div>
-            <div><p class="text-gray-400">اللون</p><p class="font-medium">{{ $order->pieces_color ?? '—' }}</p></div>
-            <div><p class="text-gray-400">المبلغ</p><p class="font-bold text-blue-600 text-lg">{{ $order->price }} د.م</p></div>
+            <div><p class="text-gray-400">المبلغ الإجمالي</p><p class="font-bold text-blue-600 text-lg">{{ number_format($order->price, 2) }} د.م</p></div>
         </div>
 
-        <!-- Update Status -->
+        {{-- Liste des articles avec service --}}
+        <div class="mb-6">
+            <h3 class="font-medium text-gray-700 mb-2">القطع</h3>
+            <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                @forelse($order->items as $item)
+                    <div class="flex justify-between items-center border-b border-gray-200 pb-2 last:border-0">
+                        <div>
+                            <span class="font-medium">{{ $item->pieces_type }}</span>
+                            @if($item->pieces_color)
+                                <span class="text-sm text-gray-500"> - {{ $item->pieces_color }}</span>
+                            @endif
+                            <span class="text-xs text-gray-400 mx-1">({{ $item->service }})</span>
+                            <span class="text-sm text-gray-500 mx-2">({{ $item->quantity }} × {{ number_format($item->unit_price, 2) }} د.م)</span>
+                        </div>
+                        <span class="font-bold">{{ number_format($item->total_price, 2) }} د.م</span>
+                    </div>
+                @empty
+                    <p class="text-gray-400 text-sm">لا توجد قطع مسجلة</p>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Mise à jour du statut --}}
         <form method="POST" action="{{ route('laundry.orders.status', $order->id) }}" class="mb-4">
             @csrf @method('PATCH')
             <div class="flex gap-3 items-center">
@@ -57,7 +76,7 @@
             </div>
         </form>
 
-        <!-- Actions -->
+        {{-- Actions --}}
         <div class="flex flex-wrap gap-3 pt-4 border-t">
             <a href="{{ route('laundry.orders.pdf', $order->id) }}" target="_blank"
                class="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm hover:bg-red-200 transition">

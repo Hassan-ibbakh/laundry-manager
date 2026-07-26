@@ -13,7 +13,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.laundries.update', $laundry->id) }}">
+    <form method="POST" action="{{ route('admin.laundries.update', $laundry->id) }}" enctype="multipart/form-data">
         @csrf @method('PUT')
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">الاسم</label>
@@ -30,6 +30,27 @@
             <input type="text" name="phone" value="{{ old('phone', $laundry->phone) }}" required
                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
+
+        <!-- Logo actuel -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">الشعار الحالي</label>
+            @if($laundry->logo)
+                <div class="mb-2">
+                    <img src="{{ $laundry->logo_url }}" alt="Logo de {{ $laundry->name }}" class="h-16 w-16 object-cover rounded-lg border border-gray-200">
+                </div>
+            @else
+                <p class="text-sm text-gray-400">لا يوجد شعار</p>
+            @endif
+        </div>
+
+        <!-- Changer le logo -->
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">تغيير الشعار (اختياري)</label>
+            <input type="file" name="logo" accept="image/*"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            <p class="text-xs text-gray-400 mt-1">اتركه فارغًا للحفاظ على الشعار الحالي. الحد الأقصى 2 ميغابايت.</p>
+        </div>
+
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور الجديدة (اتركها فارغة إن لم تريد تغييرها)</label>
             <input type="password" name="password"

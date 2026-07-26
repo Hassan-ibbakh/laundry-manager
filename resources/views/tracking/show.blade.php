@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تتبع طلبك</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     <meta http-equiv="refresh" content="10">
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 to-violet-50 flex items-center justify-center p-4">
@@ -46,7 +48,7 @@
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-400">عدد القطع</span>
-                <span>{{ $order->pieces_count }}</span>
+                <span>{{ $order->items->sum('quantity') }}</span>
             </div>
             <div class="flex justify-between">
                 <span class="text-gray-400">المبلغ</span>

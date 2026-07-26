@@ -43,10 +43,14 @@
                     <tr class="hover:bg-gray-50/50 transition-colors duration-150">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
-                                    <?php echo e(strtoupper(substr($laundry->name, 0, 2))); ?>
+                                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($laundry->logo): ?>
+                                    <img src="<?php echo e($laundry->logo_url); ?>" alt="<?php echo e($laundry->name); ?>" class="w-9 h-9 object-cover rounded-full border border-gray-200">
+                                <?php else: ?>
+                                    <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                                        <?php echo e(strtoupper(substr($laundry->name, 0, 2))); ?>
 
-                                </div>
+                                    </div>
+                                <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                                 <span class="font-medium text-gray-800"><?php echo e($laundry->name); ?></span>
                             </div>
                         </td>

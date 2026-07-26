@@ -42,6 +42,9 @@ Route::prefix('laundry')->name('laundry.')->group(function () {
         Route::get('clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
         Route::put('clients/{id}', [ClientController::class, 'update'])->name('clients.update');
         Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+        
+        // Recherche de clients (autocomplétion)
+        Route::get('clients/search', [ClientController::class, 'search'])->name('clients.search');
 
         // Orders
         Route::get('orders', [OrderController::class, 'index'])->name('orders.index');

@@ -15,6 +15,7 @@ class Laundry extends Authenticatable
         'phone',
         'password',
         'is_active',
+        'logo',       // nouveau champ
     ];
 
     protected $hidden = [
@@ -34,5 +35,16 @@ class Laundry extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Accesseur pour l'URL du logo
+     */
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo) {
+            return asset('storage/logos/' . $this->logo);
+        }
+        return null;
     }
 }

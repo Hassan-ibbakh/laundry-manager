@@ -24,12 +24,18 @@
         <tr><td>اسم العميل</td><td>{{ $order->client->name }}</td></tr>
         <tr><td>هاتف العميل</td><td>{{ $order->client->phone }}</td></tr>
         <tr><td>الخدمة</td><td>{{ $order->service }}</td></tr>
-        <tr><td>عدد القطع</td><td>{{ $order->pieces_count }}</td></tr>
-        <tr><td>نوع القطع</td><td>{{ $order->pieces_type }}</td></tr>
-        <tr><td>اللون</td><td>{{ $order->pieces_color ?? '—' }}</td></tr>
+        <tr><td>القطع</td>
+            <td>
+                @forelse($order->items as $item)
+                    <div>{{ $item->pieces_type }} {{ $item->pieces_color ? '('.$item->pieces_color.')' : '' }} ({{ $item->quantity }} × {{ number_format($item->unit_price, 2) }}DH)</div>
+                @empty
+                    —
+                @endforelse
+            </td>
+        </tr>
         <tr><td>تاريخ الاستلام</td><td>{{ $order->received_at }}</td></tr>
         <tr><td>الحالة</td><td><span class="status">{{ $order->status }}</span></td></tr>
-        <tr><td>المبلغ الإجمالي</td><td class="total">{{ $order->price }} درهم</td></tr>
+        <tr><td>المبلغ الإجمالي</td><td class="total">{{ number_format($order->price, 2) }} درهم</td></tr>
     </table>
 
     <p style="text-align:center; color:#aaa; margin-top:30px; font-size:11px;">

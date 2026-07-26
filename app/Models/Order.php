@@ -13,19 +13,17 @@ class Order extends Model
         'laundry_id',
         'client_id',
         'order_number',
-        'pieces_count',
-        'pieces_type',
-        'pieces_color',
         'service',
         'price',
         'received_at',
         'status',
         'tracking_token',
+        'notes',
     ];
 
     protected $casts = [
-        'received_at' => 'date', // ← AJOUTER CE CAST
-        'price' => 'decimal:2',
+        'received_at' => 'date',
+        'price'       => 'decimal:2',
     ];
 
     public function laundry()
@@ -36,5 +34,10 @@ class Order extends Model
     public function client()
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

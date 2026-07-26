@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Nouvelle blanchisserie - LaundryOS')
+@section('title', 'مغسلة جديدة - LaundryOS')
 @section('content')
 
 <style>
@@ -43,6 +43,9 @@
     .form-group input.error {
         border-color: #EF4444;
         box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+    .form-group input[type="file"] {
+        padding: 0.5rem;
     }
     .btn-submit {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -94,22 +97,22 @@
     <div class="mb-8">
         <div class="flex items-center gap-3 text-sm text-gray-500">
             <a href="{{ route('admin.laundries.index') }}" class="hover:text-blue-600 transition-colors">
-                Tableau de bord
+                لوحة التحكم
             </a>
             <span>/</span>
-            <span>Nouvelle blanchisserie</span>
+            <span>مغسلة جديدة</span>
         </div>
         <div class="flex items-start justify-between mt-4">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
                     <span>🏪</span>
-                    Ajouter une blanchisserie
+                    إضافة مغسلة
                 </h2>
-                <p class="text-gray-500 mt-1">Créez un nouveau compte de blanchisserie sur la plateforme</p>
+                <p class="text-gray-500 mt-1">أنشئ حساب مغسلة جديداً على المنصة</p>
             </div>
             <div class="bg-blue-50 rounded-lg px-4 py-2 text-blue-700 text-sm font-medium flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                Formulaire sécurisé
+                نموذج آمن
             </div>
         </div>
     </div>
@@ -123,7 +126,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <div>
-                        <p class="font-medium text-red-700">Veuillez corriger les erreurs suivantes :</p>
+                        <p class="font-medium text-red-700">يرجى تصحيح الأخطاء التالية:</p>
                         <ul class="mt-2 space-y-1 text-sm text-red-600">
                             @foreach($errors->all() as $error)
                                 <li>• {{ $error }}</li>
@@ -134,7 +137,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('admin.laundries.store') }}" class="space-y-6">
+        <form method="POST" action="{{ route('admin.laundries.store') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -144,10 +147,10 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
-                        Nom de la blanchisserie
+                        اسم المغسلة
                     </label>
                     <input type="text" name="name" value="{{ old('name') }}" required
-                        placeholder="Ex: Blanchisserie du Centre" 
+                        placeholder="مثال: مغسلة المركز" 
                         class="{{ $errors->has('name') ? 'error' : '' }}">
                 </div>
 
@@ -157,10 +160,10 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                         </svg>
-                        Email
+                        البريد الإلكتروني
                     </label>
                     <input type="email" name="email" value="{{ old('email') }}" required
-                        placeholder="contact@blanchisserie.com"
+                        placeholder="contact@maghsala.com"
                         class="{{ $errors->has('email') ? 'error' : '' }}">
                 </div>
 
@@ -170,11 +173,24 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                         </svg>
-                        Téléphone
+                        الهاتف
                     </label>
                     <input type="text" name="phone" value="{{ old('phone') }}" required
                         placeholder="+212 6XX-XXXXXX"
                         class="{{ $errors->has('phone') ? 'error' : '' }}">
+                </div>
+
+                <!-- Logo -->
+                <div class="form-group md:col-span-2">
+                    <label>
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        الشعار (اختياري)
+                    </label>
+                    <input type="file" name="logo" accept="image/*"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <p class="text-xs text-gray-400 mt-1">الصيغ المقبولة: JPG، PNG، GIF – الحد الأقصى 2 ميغابايت</p>
                 </div>
 
                 <!-- Password -->
@@ -183,12 +199,12 @@
                         <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
-                        Mot de passe
+                        كلمة المرور
                     </label>
                     <input type="password" name="password" required
-                        placeholder="Minimum 8 caractères"
+                        placeholder="الحد الأدنى 6 أحرف"
                         class="{{ $errors->has('password') ? 'error' : '' }}">
-                    <p class="text-xs text-gray-400 mt-1">Le mot de passe doit contenir au moins 8 caractères</p>
+                    <p class="text-xs text-gray-400 mt-1">يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل</p>
                 </div>
             </div>
 
@@ -198,11 +214,11 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Créer la blanchisserie
+                    إنشاء المغسلة
                 </button>
                 <a href="{{ route('admin.laundries.index') }}" 
                    class="btn-cancel px-6 py-3 rounded-xl text-gray-600 font-medium">
-                    Annuler
+                    إلغاء
                 </a>
             </div>
         </form>
@@ -215,11 +231,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div>
-                <p class="text-sm font-medium text-gray-700">Informations importantes</p>
+                <p class="text-sm font-medium text-gray-700">معلومات مهمة</p>
                 <ul class="mt-1 text-xs text-gray-500 space-y-1">
-                    <li>• La blanchisserie recevra un email de confirmation</li>
-                    <li>• Le mot de passe doit être sécurisé (min 8 caractères)</li>
-                    <li>• Vous pourrez activer/désactiver le compte plus tard</li>
+                    <li>• ستتلقى المغسلة رسالة تأكيد عبر البريد الإلكتروني</li>
+                    <li>• يجب أن تكون كلمة المرور آمنة (6 أحرف على الأقل)</li>
+                    <li>• يمكنك تفعيل/تعطيل الحساب لاحقاً</li>
+                    <li>• الشعار اختياري لكنه موصى به لهوية العلامة التجارية</li>
                 </ul>
             </div>
         </div>
