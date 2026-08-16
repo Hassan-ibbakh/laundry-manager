@@ -97,17 +97,17 @@
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white mb-2">LaundryOS</h1>
-            <p class="text-white/80 text-sm">Système de gestion de blanchisserie</p>
+            <p class="text-white/80 text-sm">نظام إدارة المغاسل</p>
         </div>
 
         <!-- Login Card -->
         <div class="glass-card rounded-2xl p-8">
             <div class="text-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-800">Bienvenue</h2>
-                <p class="text-gray-500 text-sm mt-1">Connectez-vous à votre espace administrateur</p>
+                <h2 class="text-2xl font-bold text-gray-800">مرحبا</h2>
+                <p class="text-gray-500 text-sm mt-1">سجّل الدخول إلى لوحة الإدارة</p>
                 <div class="flex justify-center gap-2 mt-3">
                     <span class="inline-block w-2 h-2 rounded-full bg-green-500 pulse-dot"></span>
-                    <span class="text-xs text-gray-400">Système sécurisé</span>
+                    <span class="text-xs text-gray-400">نظام آمن</span>
                 </div>
             </div>
 
@@ -125,7 +125,7 @@
             <form method="POST" action="<?php echo e(route('admin.login.post')); ?>" class="space-y-6">
                 <?php echo csrf_field(); ?>
                 <div class="input-group">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">البريد الإلكتروني</label>
                     <div class="relative">
                         <input type="email" name="email" value="<?php echo e(old('email')); ?>" required
                             class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
@@ -137,7 +137,7 @@
                 </div>
 
                 <div class="input-group">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">كلمة المرور</label>
                     <div class="relative">
                         <input type="password" name="password" required
                             class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
@@ -151,19 +151,19 @@
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-2 text-sm text-gray-600">
                         <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500">
-                        Se souvenir de moi
+                        تذكرني
                     </label>
-                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Mot de passe oublié ?</a>
+                    <a href="#" class="text-sm text-blue-600 hover:text-blue-800 font-medium">هل نسيت كلمة المرور؟</a>
                 </div>
 
                 <button type="submit" class="btn-login w-full text-white py-3 rounded-xl font-semibold text-lg relative">
-                    Connexion
+                    تسجيل الدخول
                 </button>
             </form>
 
             <div class="mt-6 text-center">
                 <p class="text-xs text-gray-400">
-                    Version 2.0.1 • Sécurisé par Laravel
+                    الإصدار 2.0.1 • مضمون بواسطة Laravel
                 </p>
             </div>
         </div>

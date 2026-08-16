@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Laundry;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Order;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -182,19 +181,18 @@ class OrderController extends Controller
                         // lockForUpdate() verrouille les lignes correspondantes le temps
                         // de la transaction : aucune autre requête ne peut lire/générer
                         // le même numéro tant que celle-ci n'est pas terminée
-                        $prefix = 'CMD-' . date('Ymd');
-                        $lastOrder = Order::where('order_number', 'like', $prefix . '%')
-                            ->orderBy('order_number', 'desc')
+                        $lastOrder = Order::orderBy('order_number', 'desc')
                             ->lockForUpdate()
                             ->first();
 
                         if ($lastOrder) {
-                            $lastNumber = intval(substr($lastOrder->order_number, -4));
-                            $number = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+                            preg_match('/(\d+)$/', $lastOrder->order_number, $matches);
+                            $lastNumber = isset($matches[1]) ? (int) $matches[1] : 0;
+                            $number = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
                         } else {
-                            $number = '0001';
+                            $number = '00001';
                         }
-                        $orderNumber = $prefix . '-' . $number;
+                        $orderNumber = $number;
 
                         $orderData = [
                             'laundry_id'     => $this->laundryId(),
@@ -282,16 +280,6 @@ class OrderController extends Controller
         return back()->with('success', 'تم تحديث الحالة بنجاح.');
     }
 
-    public function pdf($id)
-    {
-        $order = Order::where('laundry_id', $this->laundryId())
-            ->with(['client', 'laundry', 'items'])
-            ->findOrFail($id);
-
-        $pdf = Pdf::loadView('pdf.order', compact('order'));
-        return $pdf->stream('order-'.$order->order_number.'.pdf');
-    }
-
     public function whatsapp($id)
     {
         $order = Order::where('laundry_id', $this->laundryId())
@@ -311,7 +299,7 @@ class OrderController extends Controller
             . "👤 Client : {$order->client->name}\n"
             . "📋 Commande : {$order->order_number}\n"
             . "📊 Statut : {$statusLabels[$order->status]}\n"
-            . "💰 Prix : {$order->price} DH\n"
+            . "💰 Prix total : {$order->price} DH\n"
             . "📅 Date : {$order->received_at->format('d/m/Y')}\n\n"
             . "🔗 Suivez votre commande :\n{$trackingUrl}";
 

@@ -87,12 +87,12 @@
         <div>
             <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
                 <span>📊</span>
-                Tableau de bord
+                لوحة التحكم
             </h2>
-            <p class="text-gray-500 mt-1">Vue d'ensemble de votre plateforme de blanchisserie</p>
+            <p class="text-gray-500 mt-1">نظرة عامة على منصة إدارة المغاسل الخاصة بك</p>
         </div>
         <div class="flex items-center gap-3">
-            <span class="text-sm text-gray-400">Dernière mise à jour: <?php echo e(now()->format('d/m/Y H:i')); ?></span>
+            <span class="text-sm text-gray-400">آخر تحديث: <?php echo e(now()->format('d/m/Y H:i')); ?></span>
             <button class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg transition-colors">
                 <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
@@ -106,10 +106,10 @@
         <div class="stat-card rounded-2xl p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Total des blanchisseries</p>
+                    <p class="text-sm text-gray-500 font-medium">إجمالي المغاسل</p>
                     <p class="stat-number mt-2"><?php echo e($stats['total_laundries']); ?></p>
                     <p class="text-xs text-green-500 mt-2">
-                        <span class="font-bold">+12%</span> ce mois
+                        <span class="font-bold">+12%</span> هذا الشهر
                     </p>
                 </div>
                 <div class="icon-wrapper bg-blue-50 text-blue-600">
@@ -123,10 +123,10 @@
         <div class="stat-card rounded-2xl p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Blanchisseries actives</p>
+                    <p class="text-sm text-gray-500 font-medium">المغاسل النشطة</p>
                     <p class="stat-number mt-2"><?php echo e($stats['active_laundries']); ?></p>
                     <p class="text-xs text-green-500 mt-2">
-                        <span class="font-bold"><?php echo e($stats['active_percentage']); ?>%</span> du total
+                        <span class="font-bold"><?php echo e($stats['active_percentage']); ?>%</span> من الإجمالي
                     </p>
                 </div>
                 <div class="icon-wrapper bg-green-50 text-green-600">
@@ -140,10 +140,10 @@
         <div class="stat-card rounded-2xl p-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-500 font-medium">Commandes totales</p>
+                    <p class="text-sm text-gray-500 font-medium">إجمالي الطلبات</p>
                     <p class="stat-number mt-2"><?php echo e($stats['total_orders']); ?></p>
                     <p class="text-xs text-blue-500 mt-2">
-                        <span class="font-bold">+5</span> aujourd'hui
+                        <span class="font-bold">+5</span> اليوم
                     </p>
                 </div>
                 <div class="icon-wrapper bg-violet-50 text-violet-600">
@@ -159,12 +159,12 @@
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-                <h3 class="font-semibold text-gray-800 text-lg">Gestion des blanchisseries</h3>
-                <p class="text-sm text-gray-400 mt-1">Liste de toutes les blanchisseries enregistrées</p>
+                <h3 class="font-semibold text-gray-800 text-lg">إدارة المغاسل</h3>
+                <p class="text-sm text-gray-400 mt-1">قائمة جميع المغاسل المسجلة</p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="relative">
-                    <input type="text" placeholder="Rechercher..." 
+                    <input type="text" placeholder="بحث..." 
                         class="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10">
                     <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -172,7 +172,7 @@
                 </div>
                 <a href="<?php echo e(route('admin.laundries.create')); ?>"
                    class="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all hover:scale-105">
-                    + Nouvelle blanchisserie
+                    + مغسلة جديدة
                 </a>
             </div>
         </div>
@@ -181,11 +181,11 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Blanchisserie</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المغسلة</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الهاتف</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
+                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -205,11 +205,11 @@
                         <td class="px-6 py-4">
                             <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($laundry->is_active): ?>
                                 <span class="badge-status badge-active bg-green-50 text-green-700">
-                                    Actif
+                                    نشط
                                 </span>
                             <?php else: ?>
                                 <span class="badge-status badge-inactive bg-red-50 text-red-700">
-                                    Inactif
+                                    غير نشط
                                 </span>
                             <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                         </td>
@@ -217,13 +217,13 @@
                             <div class="flex items-center gap-2">
                                 <a href="<?php echo e(route('admin.laundries.edit', $laundry->id)); ?>"
                                    class="action-btn bg-blue-50 text-blue-600 hover:bg-blue-100">
-                                    Modifier
+                                    تعديل
                                 </a>
                                 <form method="POST" action="<?php echo e(route('admin.laundries.destroy', $laundry->id)); ?>"
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette blanchisserie ?')" class="inline">
+                                      onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذه المغسلة؟')" class="inline">
                                     <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                     <button class="action-btn bg-red-50 text-red-600 hover:bg-red-100">
-                                        Supprimer
+                                        حذف
                                     </button>
                                 </form>
                             </div>
@@ -236,9 +236,9 @@
                                 <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
                                 </svg>
-                                <p class="text-gray-400">Aucune blanchisserie enregistrée</p>
+                                <p class="text-gray-400">لا توجد مغاسل مسجلة</p>
                                 <a href="<?php echo e(route('admin.laundries.create')); ?>" class="text-blue-600 hover:text-blue-800 font-medium">
-                                    Créer votre première blanchisserie →
+                                    أنشئ أول مغسلة لك →
                                 </a>
                             </div>
                         </td>

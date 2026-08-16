@@ -106,11 +106,6 @@
                                class="text-green-600 hover:text-green-800 text-xs font-medium transition" target="_blank">
                                 💬
                             </a>
-                            <span class="text-gray-300">|</span>
-                            <a href="{{ route('laundry.orders.pdf', $order->id) }}"
-                               class="text-red-600 hover:text-red-800 text-xs font-medium transition" target="_blank">
-                                📄
-                            </a>
                         </div>
                     </td>
                 </tr>

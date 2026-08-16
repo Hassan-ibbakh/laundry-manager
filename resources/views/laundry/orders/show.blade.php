@@ -78,10 +78,6 @@
 
         {{-- Actions --}}
         <div class="flex flex-wrap gap-3 pt-4 border-t">
-            <a href="{{ route('laundry.orders.pdf', $order->id) }}" target="_blank"
-               class="bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm hover:bg-red-200 transition">
-                🖨 طباعة PDF
-            </a>
             <a href="{{ route('laundry.orders.whatsapp', $order->id) }}" target="_blank"
                class="bg-green-100 text-green-700 px-4 py-2 rounded-lg text-sm hover:bg-green-200 transition">
                 💬 إرسال واتساب

@@ -79,7 +79,7 @@
                 </svg>
             </div>
             <h1 class="text-3xl font-bold text-white">LaundryOS</h1>
-            <p class="text-white/70 text-sm mt-1">Système de gestion de blanchisserie</p>
+            <p class="text-white/70 text-sm mt-1">نظام إدارة المغاسل</p>
         </div>
 
         <!-- Login Card -->
@@ -103,7 +103,7 @@
                 <div class="input-group mb-4 relative">
                     <label class="block text-sm font-medium text-gray-700 mb-1">📧 البريد الإلكتروني</label>
                     <input type="email" name="email" value="<?php echo e(old('email')); ?>" required
-                        placeholder="exemple@email.com"
+                        placeholder="example@email.com"
                         class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
                     <svg class="icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
