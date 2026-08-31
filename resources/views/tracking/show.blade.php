@@ -60,6 +60,35 @@
             </div>
         </div>
 
+        <div class="mt-6 border-t border-gray-100 pt-5">
+            <h2 class="mb-3 text-sm font-semibold text-gray-700">تفاصيل الطلب</h2>
+            <div class="space-y-3">
+                @forelse($order->items as $item)
+                    <div class="rounded-lg bg-gray-50 p-3 text-sm">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="min-w-0 break-words">
+                                <p class="font-medium text-gray-800">{{ $item->pieces_type }}</p>
+                                @if($item->pieces_color)
+                                    <p class="text-xs text-gray-500">اللون: {{ $item->pieces_color }}</p>
+                                @endif
+                                <p class="text-xs text-gray-500">الخدمة: {{ $item->service }}</p>
+                            </div>
+                            <p class="shrink-0 font-semibold text-gray-700">
+                                {{ $item->quantity }} × {{ number_format($item->unit_price, 2) }} د.م
+                            </p>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-sm text-gray-400">لا توجد تفاصيل للطلب</p>
+                @endforelse
+            </div>
+        </div>
+
+        <a href="{{ route('tracking.pdf', $order->tracking_token) }}"
+           class="mt-5 block w-full rounded-lg bg-red-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-red-700">
+            تحميل نسخة PDF
+        </a>
+
         <p class="text-center text-xs text-gray-300 mt-6">يتم تحديث الصفحة تلقائياً كل 10 ثوان</p>
     </div>
 </body>

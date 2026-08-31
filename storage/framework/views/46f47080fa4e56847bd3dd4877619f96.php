@@ -59,20 +59,20 @@
                 <tr>
                     <th class="px-4 py-3 text-right">رقم الطلب</th>
                     <th class="px-4 py-3 text-right">العميل</th>
-                    <th class="px-4 py-3 text-right">الخدمة</th>
-                    <th class="px-4 py-3 text-right">المبلغ</th>
                     <th class="px-4 py-3 text-right">الحالة</th>
                     <th class="px-4 py-3 text-right">التاريخ</th>
-                    <th class="px-4 py-3 text-right">إجراءات</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::openLoop(); ?><?php endif; ?><?php $__empty_1 = true; $__currentLoopData = $orders; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $order): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::startLoopIteration(); ?><?php endif; ?>
-                <tr class="hover:bg-gray-50 transition">
+                <tr class="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition"
+                    role="link" tabindex="0"
+                    aria-label="عرض الطلب <?php echo e($order->order_number); ?>"
+                    data-order-url="<?php echo e(route('laundry.orders.show', $order->id)); ?>"
+                    onclick="window.location.href = this.dataset.orderUrl"
+                    onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href = this.dataset.orderUrl; }">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-gray-700"><?php echo e($order->order_number); ?></td>
                     <td class="px-4 py-3"><?php echo e($order->client->name ?? '—'); ?></td>
-                    <td class="px-4 py-3"><?php echo e($order->service); ?></td>
-                    <td class="px-4 py-3 font-semibold"><?php echo e(number_format($order->price, 2)); ?> د.م</td>
                     <td class="px-4 py-3">
                         <?php
                             $colors = [
@@ -97,23 +97,10 @@
                         <?php echo e($order->created_at->format('d/m/Y')); ?>
 
                     </td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <a href="<?php echo e(route('laundry.orders.show', $order->id)); ?>"
-                               class="text-blue-600 hover:text-blue-800 text-xs font-medium transition">
-                                👁️ عرض
-                            </a>
-                            <span class="text-gray-300">|</span>
-                            <a href="<?php echo e(route('laundry.orders.whatsapp', $order->id)); ?>"
-                               class="text-green-600 hover:text-green-800 text-xs font-medium transition" target="_blank">
-                                💬
-                            </a>
-                        </div>
-                    </td>
                 </tr>
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::endLoop(); ?><?php endif; ?><?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::closeLoop(); ?><?php endif; ?>
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-400">
                         <div class="text-4xl mb-2">📦</div>
                         <p class="text-lg font-medium">لا توجد طلبات</p>
                         <p class="text-sm mt-1">قم بإنشاء أول طلب لك</p>

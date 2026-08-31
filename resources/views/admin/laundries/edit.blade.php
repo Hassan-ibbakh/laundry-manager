@@ -62,13 +62,13 @@
                 class="w-4 h-4 text-blue-600">
             <label for="is_active" class="text-sm text-gray-700">حساب نشط</label>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
             <button type="submit"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">
+                class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">
                 تحديث
             </button>
             <a href="{{ route('admin.laundries.index') }}"
-               class="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200">
+               class="w-full sm:w-auto text-center bg-gray-100 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-200">
                 إلغاء
             </a>
         </div>

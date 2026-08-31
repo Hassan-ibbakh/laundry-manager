@@ -13,13 +13,13 @@ use App\Http\Controllers\TrackingController;
 // ─── Admin Auth ───────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('login', [AdminAuth::class, 'showLogin'])->name('login');
-    Route::post('login', [AdminAuth::class, 'login'])->name('login.post');
+    Route::post('login', [AdminAuth::class, 'login'])->middleware('throttle:5,1')->name('login.post');
     Route::post('logout', [AdminAuth::class, 'logout'])->name('logout');
 
     // Admin Protected Routes
     Route::middleware('auth.admin')->group(function () {
         Route::get('dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
-        Route::resource('laundries', AdminLaundry::class);
+        Route::resource('laundries', AdminLaundry::class)->except(['show']);
     });
 });
 
@@ -27,7 +27,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::prefix('laundry')->name('laundry.')->group(function () {
     // Routes de connexion (sans middleware)
     Route::get('login', [LaundryAuth::class, 'showLogin'])->name('login');
-    Route::post('login', [LaundryAuth::class, 'login'])->name('login.post');
+    Route::post('login', [LaundryAuth::class, 'login'])->middleware('throttle:5,1')->name('login.post');
     Route::post('logout', [LaundryAuth::class, 'logout'])->name('logout');
 
     // Routes protégées par authentification
@@ -51,6 +51,7 @@ Route::prefix('laundry')->name('laundry.')->group(function () {
         Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
         Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
         Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+        Route::get('orders/{id}/pdf', [OrderController::class, 'pdf'])->name('orders.pdf');
         Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
         Route::get('orders/{id}/whatsapp', [OrderController::class, 'whatsapp'])->name('orders.whatsapp');
     });
@@ -58,6 +59,7 @@ Route::prefix('laundry')->name('laundry.')->group(function () {
 
 // ─── Public Tracking ──────────────────────────────────────
 Route::get('suivi/{tracking_token}', [TrackingController::class, 'show'])->name('tracking.show');
+Route::get('suivi/{tracking_token}/pdf', [TrackingController::class, 'pdf'])->name('tracking.pdf');
 
 // ─── Redirection Root ─────────────────────────────────────
 Route::get('/', function () {

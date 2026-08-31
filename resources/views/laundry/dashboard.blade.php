@@ -3,7 +3,7 @@
 @section('content')
 
 {{-- En-tête avec logo --}}
-<div class="flex items-center justify-between mb-6">
+<div class="flex flex-wrap gap-4 items-center justify-between mb-6">
     <div class="flex items-center gap-4">
         {{-- Logo de la blanchisserie --}}
         @php

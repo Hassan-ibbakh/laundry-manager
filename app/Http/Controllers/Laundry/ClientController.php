@@ -48,19 +48,26 @@ class ClientController extends Controller
             ->with('success', 'تم إضافة العميل بنجاح.');
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         $client = Client::where('laundry_id', auth('laundry')->id())->findOrFail($id);
         return view('laundry.clients.edit', compact('client'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $client = Client::where('laundry_id', auth('laundry')->id())->findOrFail($id);
 
         $data = $request->validate([
             'name'  => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('clients', 'phone')
+                    ->ignore($client->id)
+                    ->where(fn ($query) => $query->where('laundry_id', auth('laundry')->id())),
+            ],
             'email' => 'nullable|email|max:255',
             'address' => 'nullable|string|max:255',
         ]);
@@ -71,7 +78,7 @@ class ClientController extends Controller
             ->with('success', 'تم تحديث العميل بنجاح.');
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         $client = Client::where('laundry_id', auth('laundry')->id())->findOrFail($id);
         $client->delete();

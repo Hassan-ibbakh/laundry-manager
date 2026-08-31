@@ -22,7 +22,9 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::guard('laundry')->attempt($credentials)) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::guard('laundry')->attempt($credentials, $remember)) {
             // Vérifier si le compte est actif
             if (!auth('laundry')->user()->is_active) {
                 Auth::guard('laundry')->logout();
@@ -31,7 +33,7 @@ class AuthController extends Controller
                 ]);
             }
             $request->session()->regenerate();
-            return redirect()->route('laundry.dashboard');
+            return redirect()->route('laundry.orders.index');
         }
 
         return back()->withErrors([
@@ -42,8 +44,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('laundry')->logout();
-        // Utiliser regenerate() au lieu de invalidate()
-        $request->session()->regenerate();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('laundry.login')->with('success', 'Déconnexion réussie');
     }
 }

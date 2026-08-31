@@ -102,7 +102,7 @@
             <span>/</span>
             <span>مغسلة جديدة</span>
         </div>
-        <div class="flex items-start justify-between mt-4">
+        <div class="flex flex-wrap gap-4 items-start justify-between mt-4">
             <div>
                 <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
                     <span>🏪</span>
@@ -110,7 +110,7 @@
                 </h2>
                 <p class="text-gray-500 mt-1">أنشئ حساب مغسلة جديداً على المنصة</p>
             </div>
-            <div class="bg-blue-50 rounded-lg px-4 py-2 text-blue-700 text-sm font-medium flex items-center gap-2">
+            <div class="shrink-0 bg-blue-50 rounded-lg px-4 py-2 text-blue-700 text-sm font-medium flex items-center gap-2">
                 <span class="inline-block w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
                 نموذج آمن
             </div>
@@ -209,15 +209,15 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
-                <button type="submit" class="btn-submit text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-gray-100">
+                <button type="submit" class="w-full sm:w-auto btn-submit text-white px-8 py-3 rounded-xl font-semibold flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
                     إنشاء المغسلة
                 </button>
                 <a href="{{ route('admin.laundries.index') }}" 
-                   class="btn-cancel px-6 py-3 rounded-xl text-gray-600 font-medium">
+                   class="w-full sm:w-auto text-center btn-cancel px-6 py-3 rounded-xl text-gray-600 font-medium">
                     إلغاء
                 </a>
             </div>

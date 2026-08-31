@@ -36,8 +36,8 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('admin')->logout();
-        // Utiliser regenerate() au lieu de invalidate()
-        $request->session()->regenerate();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('admin.login')->with('success', 'Déconnexion réussie');
     }
 }

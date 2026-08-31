@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use TCPDF;
 
 class OrderController extends Controller
 {
@@ -31,15 +33,17 @@ class OrderController extends Controller
             });
         }
 
-        // Filtre par date unique
+        // Use a range so an index on created_at can be used.
         if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
+            $query->whereBetween('created_at', [
+                $request->date . ' 00:00:00',
+                $request->date . ' 23:59:59',
+            ]);
         }
 
         $orders = $query->latest()->paginate(15)->appends($request->query());
-        $clients = Client::where('laundry_id', $this->laundryId())->get();
 
-        return view('laundry.orders.index', compact('orders', 'clients'));
+        return view('laundry.orders.index', compact('orders'));
     }
 
     public function create()
@@ -64,34 +68,20 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('=== DÉBUT CRÉATION COMMANDE ===');
-            Log::info('Données reçues (raw):', ['items_raw' => $request->input('items')]);
-
             // Décoder le champ 'items' (JSON -> tableau PHP)
             $items = $request->input('items');
             if (is_string($items)) {
                 $decodedItems = json_decode($items, true);
                 if ($decodedItems === null) {
-                    Log::error('❌ Erreur JSON_decode:', [
-                        'raw' => $items,
-                        'json_error' => json_last_error_msg(),
-                    ]);
                     throw new \Exception('الرجاء اختيار عميل أو إضافة عميل جديد بالاسم والهاتف معاً.');
                 }
                 $request->merge(['items' => $decodedItems]);
-                Log::info('✓ Items décodés avec succès:', $decodedItems);
             }
 
             // Validation STRICTE : vérifier les données client EN PREMIER
             $hasClientId = !empty($request->input('client_id'));
             $hasClientName = !empty($request->input('client_name'));
             $hasClientPhone = !empty($request->input('client_phone'));
-
-            Log::info('Vérification client:', [
-                'has_client_id' => $hasClientId,
-                'has_client_name' => $hasClientName,
-                'has_client_phone' => $hasClientPhone,
-            ]);
 
             // Si aucun client existant, on DOIT avoir le nom ET le téléphone
             if (!$hasClientId && (!$hasClientName || !$hasClientPhone)) {
@@ -100,13 +90,20 @@ class OrderController extends Controller
 
             // Validation du formulaire
             $validated = $request->validate([
-                'client_id'          => 'nullable|integer|exists:clients,id',
+                'client_id'          => [
+                    'nullable',
+                    'integer',
+                    Rule::exists('clients', 'id')->where(
+                        fn ($query) => $query->where('laundry_id', $this->laundryId())
+                    ),
+                ],
                 'client_name'        => $hasClientId ? 'nullable' : 'required|string|max:255',
                 'client_phone'       => $hasClientId ? 'nullable' : 'required|string|max:20',
                 'received_at'        => 'required|date',
                 'notes'              => 'nullable|string|max:1000',
                 'items'              => 'required|array|min:1',
-                'items.*.service'    => 'required|in:غسيل,كي,غسيل+كي',
+                'items.*.service'    => 'required|array|min:1',
+                'items.*.service.*'  => ['required', Rule::in(['تصبين', 'مصلوح', 'صباغة', 'توصيل'])],
                 'items.*.type'       => 'required|string|max:255',
                 'items.*.color'      => 'nullable|string|max:255',
                 'items.*.quantity'   => 'required|integer|min:1',
@@ -129,8 +126,6 @@ class OrderController extends Controller
                 'received_at.date' => 'تاريخ الاستلام يجب أن يكون صحيح.',
             ]);
 
-            Log::info('✓ Validation réussie');
-
             // Gestion du client
             $clientId = $validated['client_id'] ?? null;
 
@@ -149,9 +144,6 @@ class OrderController extends Controller
                         'name'       => $clientName,
                         'phone'      => $clientPhone,
                     ]);
-                    Log::info('✓ Nouveau client créé ID: ' . $client->id);
-                } else {
-                    Log::info('✓ Client existant trouvé ID: ' . $client->id);
                 }
 
                 $clientId = $client->id;
@@ -164,8 +156,13 @@ class OrderController extends Controller
             }
 
             // Services uniques
-            $servicesList = array_unique(array_column($validated['items'], 'service'));
-            $globalService = !empty($servicesList) ? implode(', ', $servicesList) : 'غسيل';
+            $servicesList = collect($validated['items'])
+                ->pluck('service')
+                ->flatten()
+                ->unique()
+                ->values()
+                ->all();
+            $globalService = implode(' + ', $servicesList);
 
             // Création de la commande — dans une transaction avec verrou pour éviter
             // toute collision de order_number si deux requêtes arrivent en même temps
@@ -210,7 +207,7 @@ class OrderController extends Controller
 
                         foreach ($validated['items'] as $item) {
                             $newOrder->items()->create([
-                                'service'      => $item['service'],
+                                'service'      => implode(' + ', $item['service']),
                                 'pieces_type'  => $item['type'],
                                 'pieces_color' => $item['color'] ?? null,
                                 'quantity'     => $item['quantity'],
@@ -236,26 +233,14 @@ class OrderController extends Controller
                 }
             }
 
-            Log::info('✓ Commande créée ID: ' . $order->id . ', Numéro: ' . $order->order_number);
-            Log::info('✓ Tous les ' . count($validated['items']) . ' articles créés');
-            Log::info('=== FIN CRÉATION COMMANDE - SUCCÈS ===');
-
-            // Redirection explicite vers la liste des commandes après création.
-            return redirect()->to('/laundry/orders')
-                ->with('success', 'تم إنشاء الطلب بنجاح.');
+            // Open WhatsApp only after the order has been created successfully.
+            return redirect()->route('laundry.orders.whatsapp', $order->id);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('❌ Erreur de validation:', [
-                'errors' => $e->errors(),
-            ]);
-
             return back()->withErrors($e->errors())->withInput();
 
         } catch (\Exception $e) {
-            Log::error('❌ Erreur:', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile() . ':' . $e->getLine(),
-            ]);
+            Log::error('Order creation failed.', ['exception' => $e]);
 
             $message = $e->getMessage() ?: 'حدث خطأ أثناء إنشاء الطلب.';
 
@@ -263,7 +248,7 @@ class OrderController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         $order = Order::where('laundry_id', $this->laundryId())
             ->with(['client', 'items'])
@@ -271,7 +256,31 @@ class OrderController extends Controller
         return view('laundry.orders.show', compact('order'));
     }
 
-    public function updateStatus(Request $request, $id)
+    public function pdf(int $id)
+    {
+        $order = Order::where('laundry_id', $this->laundryId())
+            ->with(['client', 'items', 'laundry'])
+            ->findOrFail($id);
+
+        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        $pdf->setRTL(true);
+        $pdf->SetCreator(config('app.name'));
+        $pdf->SetTitle('Commande ' . $order->order_number);
+        $pdf->SetMargins(12, 12, 12);
+        $pdf->SetAutoPageBreak(true, 12);
+        $pdf->AddPage();
+        $pdf->SetFont('dejavusans', '', 10);
+        $pdf->writeHTML(view('laundry.orders.pdf', compact('order'))->render(), true, false, true, false, '');
+        $contents = $pdf->Output('commande-' . $order->order_number . '.pdf', 'S');
+
+        return response()->streamDownload(
+            fn () => print $contents,
+            'commande-' . $order->order_number . '.pdf',
+            ['Content-Type' => 'application/pdf'],
+        );
+    }
+
+    public function updateStatus(Request $request, int $id)
     {
         $order = Order::where('laundry_id', $this->laundryId())->findOrFail($id);
         $request->validate(['status' => 'required|in:received,cleaning,ready,delivered']);
@@ -280,7 +289,7 @@ class OrderController extends Controller
         return back()->with('success', 'تم تحديث الحالة بنجاح.');
     }
 
-    public function whatsapp($id)
+    public function whatsapp(int $id)
     {
         $order = Order::where('laundry_id', $this->laundryId())
             ->with('client')
@@ -300,7 +309,7 @@ class OrderController extends Controller
             . "📋 Commande : {$order->order_number}\n"
             . "📊 Statut : {$statusLabels[$order->status]}\n"
             . "💰 Prix total : {$order->price} DH\n"
-            . "📅 Date : {$order->received_at->format('d/m/Y')}\n\n"
+            . "📅 Date : " . date('d/m/Y', strtotime((string) $order->received_at)) . "\n\n"
             . "🔗 Suivez votre commande :\n{$trackingUrl}";
 
         $phone = preg_replace('/\D/', '', $order->client->phone);

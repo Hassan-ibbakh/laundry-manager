@@ -10,10 +10,19 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        Admin::create([
-            'name'     => 'Super Admin',
-            'email'    => 'admin@laundry.com',
-            'password' => Hash::make('password'),
-        ]);
+        $email = env('ADMIN_EMAIL');
+        $password = env('ADMIN_PASSWORD');
+
+        if (app()->environment('production') && (!$email || !$password)) {
+            throw new \RuntimeException('ADMIN_EMAIL and ADMIN_PASSWORD must be configured in production.');
+        }
+
+        Admin::updateOrCreate(
+            ['email' => $email ?: 'admin@laundry.local'],
+            [
+                'name'     => 'Super Admin',
+                'password' => Hash::make($password ?: bin2hex(random_bytes(16))),
+            ],
+        );
     }
 }

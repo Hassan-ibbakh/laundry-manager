@@ -13,8 +13,8 @@
 
     <!-- Navbar -->
     <nav class="bg-gradient-to-l from-blue-500 to-violet-500 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap gap-3 justify-between items-center">
+            <div class="flex min-w-0 items-center gap-3">
                 {{-- Logo de la blanchisserie --}}
                 @php
                     $laundry = auth('laundry')->user();
@@ -24,11 +24,11 @@
                          alt="Logo de {{ $laundry->name }}" 
                          class="h-10 w-10 object-cover rounded-full border-2 border-white/30 shadow-sm">
                 @endif
-                <h1 class="text-xl font-bold">
+                <h1 class="min-w-0 truncate text-xl font-bold">
                  {{ $laundry ? $laundry->name : 'LaundryOS' }}
                 </h1>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="shrink-0 flex items-center gap-4">
                 <form method="POST" action="{{ route('laundry.logout') }}">
                     @csrf
                     <button class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-semibold hover:bg-gray-100 transition">
@@ -41,17 +41,17 @@
 
     <!-- Nav Links -->
     <div class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 flex gap-6 py-2">
+         <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center gap-x-8 gap-y-2 py-2">
             <a href="{{ route('laundry.dashboard') }}"
-               class="text-sm font-medium {{ request()->routeIs('laundry.dashboard') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
-                الرئيسية
+             class="inline-flex shrink-0 whitespace-nowrap px-1 py-1 text-sm font-medium {{ request()->routeIs('laundry.dashboard') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
+                لوحة التحكم
             </a>
             <a href="{{ route('laundry.orders.index') }}"
-               class="text-sm font-medium {{ request()->routeIs('laundry.orders.*') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
+                    class="inline-flex shrink-0 whitespace-nowrap px-1 py-1 text-sm font-medium {{ request()->routeIs('laundry.orders.*') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
                 الطلبات
             </a>
             <a href="{{ route('laundry.clients.index') }}"
-               class="text-sm font-medium {{ request()->routeIs('laundry.clients.*') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
+                    class="inline-flex shrink-0 whitespace-nowrap px-1 py-1 text-sm font-medium {{ request()->routeIs('laundry.clients.*') ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-blue-600' }}">
                 العملاء
             </a>
         </div>

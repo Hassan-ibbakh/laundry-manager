@@ -62,7 +62,7 @@
                 <div id="suggestions" class="bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden divide-y divide-gray-100"></div>
 
                 
-                <div id="selectedClientDisplay" class="hidden mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200 flex items-center justify-between">
+                <div id="selectedClientDisplay" class="hidden mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200 items-center justify-between">
                     <div>
                         <span class="font-medium text-gray-800" id="selectedClientName"></span>
                         <span class="text-sm text-gray-500 block" id="selectedClientPhone"></span>
@@ -100,23 +100,41 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">الخدمة <span class="text-red-500">*</span></label>
-                        <select id="itemService" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                            <option value="">اختر</option>
-                            <option value="غسيل">غسيل</option>
-                            <option value="كي">كي</option>
-                            <option value="غسيل+كي">غسيل + كي</option>
-                        </select>
+                        <span class="block text-sm font-medium text-gray-700">الخدمة <span class="text-red-500">*</span></span>
+                        <div id="itemServices" class="space-y-2 rounded-lg border border-gray-300 p-3">
+                            <label class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" value="تصبين" class="item-service h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400">
+                                تصبين
+                            </label>
+                            <label class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" value="مصلوح" class="item-service h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400">
+                                مصلوح
+                            </label>
+                            <label class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" value="صباغة" class="item-service h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400">
+                                صباغة
+                            </label>
+                            <label class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" value="توصيل" class="item-service h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-400">
+                                توصيل
+                            </label>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">النوع</label>
-                        <input type="text" id="itemType" placeholder="قميص، بنطلون..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div class="relative">
+                            <input type="text" id="itemType" placeholder="اكتب نوع القطعة..." autocomplete="off"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <div id="itemTypeSuggestions" class="absolute right-0 left-0 top-full z-20 mt-1 hidden max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"></div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">اللون (اختياري)</label>
-                        <input type="text" id="itemColor" placeholder="أبيض، أزرق..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <div class="relative">
+                            <input type="text" id="itemColor" placeholder="اكتب اللون..." autocomplete="off"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <div id="itemColorSuggestions" class="absolute right-0 left-0 top-full z-20 mt-1 hidden max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"></div>
+                        </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">العدد</label>
@@ -224,6 +242,90 @@ document.addEventListener('DOMContentLoaded', function() {
     // ----- PANIER -----
     let cart = [];
 
+    const clothingTypes = [
+        'سروال', 'قميجة', 'تيشورت', 'شورط', 'تريكو', 'فيستة', 'جاكيطة',
+        'جيلي', 'سورفيت', 'أونصومبل', 'سبرديلة', 'كومبلي', 'مونطو', 'جلابة',
+        'قميص', 'كسوة نساء', 'عباية', 'فراشة', 'زيف', 'جابادور', 'كندورة',
+        'فوقية', 'قفطان', 'تكشيطة', 'صاية', 'طابلية', 'بنوار', 'فوطة',
+        'مانطة', 'كوفرلي', 'لحاف', 'تلميط', 'إزار', 'ريدو', 'مخدة', 'زربية',
+        'موكيت', 'طابي', 'صلاية', 'سلهام', 'لاغوب', 'كاسكيط', 'كاشكول',
+        'شكارة', 'صاك'
+    ];
+
+    const itemTypeInput = document.getElementById('itemType');
+    const itemTypeSuggestions = document.getElementById('itemTypeSuggestions');
+
+    function updateTypeSuggestions() {
+        const query = itemTypeInput.value.trim();
+        itemTypeSuggestions.innerHTML = '';
+
+        if (!query) {
+            itemTypeSuggestions.classList.add('hidden');
+            return;
+        }
+
+        const matches = clothingTypes.filter(type => type.includes(query));
+        matches.forEach(type => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'block w-full px-3 py-2 text-right text-sm hover:bg-blue-50';
+            option.textContent = type;
+            option.addEventListener('mousedown', function(event) {
+                event.preventDefault();
+                itemTypeInput.value = type;
+                itemTypeSuggestions.classList.add('hidden');
+            });
+            itemTypeSuggestions.appendChild(option);
+        });
+
+        itemTypeSuggestions.classList.toggle('hidden', matches.length === 0);
+    }
+
+    itemTypeInput.addEventListener('input', updateTypeSuggestions);
+
+    const clothingColors = [
+        'أبيض', 'أسود', 'كري', 'أزرق', 'شيبي', 'بيج', 'مارو', 'أحمر',
+        'أخضر', 'أصفر', 'صومو', 'ليموني', 'غوز', 'موف', 'مزوق', 'مخطط'
+    ];
+    const itemColorInput = document.getElementById('itemColor');
+    const itemColorSuggestions = document.getElementById('itemColorSuggestions');
+
+    function updateColorSuggestions() {
+        const query = itemColorInput.value.trim();
+        itemColorSuggestions.innerHTML = '';
+
+        if (!query) {
+            itemColorSuggestions.classList.add('hidden');
+            return;
+        }
+
+        const matches = clothingColors.filter(color => color.includes(query));
+        matches.forEach(color => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.className = 'block w-full px-3 py-2 text-right text-sm hover:bg-blue-50';
+            option.textContent = color;
+            option.addEventListener('mousedown', function(event) {
+                event.preventDefault();
+                itemColorInput.value = color;
+                itemColorSuggestions.classList.add('hidden');
+            });
+            itemColorSuggestions.appendChild(option);
+        });
+
+        itemColorSuggestions.classList.toggle('hidden', matches.length === 0);
+    }
+
+    itemColorInput.addEventListener('input', updateColorSuggestions);
+    document.addEventListener('click', function(event) {
+        if (!itemTypeInput.contains(event.target) && !itemTypeSuggestions.contains(event.target)) {
+            itemTypeSuggestions.classList.add('hidden');
+        }
+        if (!itemColorInput.contains(event.target) && !itemColorSuggestions.contains(event.target)) {
+            itemColorSuggestions.classList.add('hidden');
+        }
+    });
+
     function updateCartUI() {
         const container = document.getElementById('cartItems');
         const totalSpan = document.getElementById('cartTotal');
@@ -238,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="item-detail">
                     <span class="font-medium">${item.type}</span>
                     ${item.color ? `<span class="text-sm text-gray-500"> - ${item.color}</span>` : ''}
-                    <span class="text-xs text-gray-400 mx-1">(${item.service})</span>
+                    <span class="text-xs text-gray-400 mx-1">(${item.service.join(' + ')})</span>
                     <span class="text-sm text-gray-500 mx-2">(${item.quantity} قطعة)</span>
                     <span class="text-sm font-bold">${subTotal.toFixed(2)} م.د</span>
                 </div>
@@ -259,13 +361,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // إضافة قطعة
     document.getElementById('addItemBtn').addEventListener('click', function() {
-        const service = document.getElementById('itemService').value;
+        const service = Array.from(document.querySelectorAll('.item-service:checked')).map(input => input.value);
         const type = document.getElementById('itemType').value.trim();
         const color = document.getElementById('itemColor').value.trim();
         const quantity = parseInt(document.getElementById('itemQuantity').value) || 1;
         const unit_price = parseFloat(document.getElementById('itemPrice').value) || 0;
 
-        if (!service) {
+        if (service.length === 0) {
             alert('الرجاء اختيار الخدمة.');
             return;
         }
@@ -281,8 +383,11 @@ document.addEventListener('DOMContentLoaded', function() {
         cart.push({ service, type, color, quantity, unit_price });
         updateCartUI();
 
-        document.getElementById('itemType').value = '';
-        document.getElementById('itemColor').value = '';
+        document.querySelectorAll('.item-service').forEach(input => input.checked = false);
+        itemTypeInput.value = '';
+        itemTypeSuggestions.classList.add('hidden');
+        itemColorInput.value = '';
+        itemColorSuggestions.classList.add('hidden');
         document.getElementById('itemQuantity').value = 1;
         document.getElementById('itemPrice').value = '';
     });
@@ -320,10 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (mode === 'new') {
             clientIdInput.value = '';
             selectedDisplay.classList.add('hidden');
+            selectedDisplay.classList.remove('flex');
             newClientFields.classList.remove('hidden');
         } else { // 'none'
             clientIdInput.value = '';
             selectedDisplay.classList.add('hidden');
+            selectedDisplay.classList.remove('flex');
             newClientFields.classList.add('hidden');
         }
     }
@@ -333,6 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedName.textContent = client.name;
         selectedPhone.textContent = client.phone;
         selectedDisplay.classList.remove('hidden');
+        selectedDisplay.classList.add('flex');
         searchInput.value = '';
         suggestions.classList.add('hidden');
         setClientMode('existing');
@@ -472,7 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const sub = item.quantity * item.unit_price;
             total += sub;
             const p = document.createElement('div');
-            p.innerHTML = `${item.type} ${item.color ? ' - '+item.color : ''} (${item.service}) ${item.quantity} × ${item.unit_price} م.د = <span class="font-bold">${sub.toFixed(2)} م.د</span>`;
+            p.innerHTML = `${item.type} ${item.color ? ' - '+item.color : ''} (${item.service.join(' + ')}) ${item.quantity} × ${item.unit_price} م.د = <span class="font-bold">${sub.toFixed(2)} م.د</span>`;
             itemsContainer.appendChild(p);
         });
         document.getElementById('reviewTotal').textContent = 'م.د ' + total.toFixed(2);

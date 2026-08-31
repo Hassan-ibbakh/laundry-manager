@@ -59,20 +59,20 @@
                 <tr>
                     <th class="px-4 py-3 text-right">رقم الطلب</th>
                     <th class="px-4 py-3 text-right">العميل</th>
-                    <th class="px-4 py-3 text-right">الخدمة</th>
-                    <th class="px-4 py-3 text-right">المبلغ</th>
                     <th class="px-4 py-3 text-right">الحالة</th>
                     <th class="px-4 py-3 text-right">التاريخ</th>
-                    <th class="px-4 py-3 text-right">إجراءات</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($orders as $order)
-                <tr class="hover:bg-gray-50 transition">
+                <tr class="cursor-pointer hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition"
+                    role="link" tabindex="0"
+                    aria-label="عرض الطلب {{ $order->order_number }}"
+                    data-order-url="{{ route('laundry.orders.show', $order->id) }}"
+                    onclick="window.location.href = this.dataset.orderUrl"
+                    onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href = this.dataset.orderUrl; }">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-gray-700">{{ $order->order_number }}</td>
                     <td class="px-4 py-3">{{ $order->client->name ?? '—' }}</td>
-                    <td class="px-4 py-3">{{ $order->service }}</td>
-                    <td class="px-4 py-3 font-semibold">{{ number_format($order->price, 2) }} د.م</td>
                     <td class="px-4 py-3">
                         @php
                             $colors = [
@@ -95,23 +95,10 @@
                     <td class="px-4 py-3 text-gray-600 text-xs">
                         {{ $order->created_at->format('d/m/Y') }}
                     </td>
-                    <td class="px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <a href="{{ route('laundry.orders.show', $order->id) }}"
-                               class="text-blue-600 hover:text-blue-800 text-xs font-medium transition">
-                                👁️ عرض
-                            </a>
-                            <span class="text-gray-300">|</span>
-                            <a href="{{ route('laundry.orders.whatsapp', $order->id) }}"
-                               class="text-green-600 hover:text-green-800 text-xs font-medium transition" target="_blank">
-                                💬
-                            </a>
-                        </div>
-                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-400">
                         <div class="text-4xl mb-2">📦</div>
                         <p class="text-lg font-medium">لا توجد طلبات</p>
                         <p class="text-sm mt-1">قم بإنشاء أول طلب لك</p>
