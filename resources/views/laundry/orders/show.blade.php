@@ -36,6 +36,18 @@
             <div><p class="text-gray-400">المبلغ الإجمالي</p><p class="font-bold text-blue-600 text-lg">{{ number_format($order->price, 2) }} د.م</p></div>
         </div>
 
+        @if($order->delivery_required)
+            <div class="mb-6 rounded-xl border border-violet-200 bg-violet-50 p-4 text-sm">
+                <div class="flex items-center gap-2 font-bold text-violet-800">
+                    <span>🚚</span><span>طلب بالتوصيل</span>
+                </div>
+                <p class="mt-2 text-violet-700">
+                    <span class="font-medium">عنوان التوصيل:</span>
+                    {{ $order->delivery_address ?: 'لم يتم إدخال عنوان التوصيل.' }}
+                </p>
+            </div>
+        @endif
+
         {{-- Liste des articles avec service --}}
         <div class="mb-6">
             <h3 class="font-medium text-gray-700 mb-2">القطع</h3>

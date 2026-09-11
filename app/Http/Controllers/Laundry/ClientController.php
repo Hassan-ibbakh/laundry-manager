@@ -81,6 +81,13 @@ class ClientController extends Controller
     public function destroy(int $id)
     {
         $client = Client::where('laundry_id', auth('laundry')->id())->findOrFail($id);
+
+        if ($client->orders()->exists()) {
+            return back()->withErrors([
+                'client' => 'لا يمكن حذف العميل لأنه مرتبط بطلبات مسجلة.',
+            ]);
+        }
+
         $client->delete();
 
         return redirect()->route('laundry.clients.index')

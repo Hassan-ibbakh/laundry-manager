@@ -10,6 +10,12 @@
     </a>
 </div>
 
+@if($errors->has('client'))
+    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+        {{ $errors->first('client') }}
+    </div>
+@endif
+
 <div class="bg-white rounded-xl shadow overflow-hidden">
     <div class="overflow-x-auto">
     <table class="w-full min-w-[36rem] text-sm">

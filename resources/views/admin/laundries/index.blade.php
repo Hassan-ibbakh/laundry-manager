@@ -44,7 +44,7 @@
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
                                 @if($laundry->logo)
-                                    <img src="{{ $laundry->logo_url }}" alt="{{ $laundry->name }}" class="w-9 h-9 object-cover rounded-full border border-gray-200">
+                                    <img src="{{ $laundry->logo_url }}" alt="{{ $laundry->name }}" class="w-9 h-9 object-cover rounded-full border border-gray-200" loading="lazy" decoding="async">
                                 @else
                                     <div class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold shadow-sm">
                                         {{ strtoupper(substr($laundry->name, 0, 2)) }}
@@ -70,6 +70,11 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-2">
+                                <a href="{{ route('admin.laundries.orders', $laundry->id) }}"
+                                   class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors">
+                                    📦 الطلبات
+                                </a>
+                                <span class="text-gray-300">|</span>
                                 <a href="{{ route('admin.laundries.edit', $laundry->id) }}"
                                    class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors">
                                     ✏️ تعديل

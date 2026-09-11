@@ -7,6 +7,7 @@ use App\Models\Laundry;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;   // important pour gérer les fichiers
 
 class LaundryController extends Controller
@@ -25,6 +26,16 @@ class LaundryController extends Controller
         return view('admin.laundries.index', compact('laundries'));
     }
 
+    public function orders(Laundry $laundry)
+    {
+        $orders = $laundry->orders()
+            ->with('client')
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.laundries.orders', compact('laundry', 'orders'));
+    }
+
     public function create()
     {
         return view('admin.laundries.create');
@@ -36,7 +47,7 @@ class LaundryController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:laundries',
             'phone'    => 'required|string|max:20',
-            'password' => 'required|min:6',
+            'password' => ['required', Password::min(10)],
             'logo'     => 'nullable|image|max:2048', // 2MB max
         ], [
             'name.required' => 'Le nom de la blanchisserie est requis',
@@ -82,7 +93,7 @@ class LaundryController extends Controller
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:laundries,email,'.$id,
             'phone'     => 'required|string|max:20',
-            'password'  => 'nullable|min:6',
+            'password'  => ['nullable', Password::min(10)],
             'logo'      => 'nullable|image|max:2048',
         ]);
 

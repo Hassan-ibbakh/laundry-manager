@@ -19,6 +19,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Admin Protected Routes
     Route::middleware('auth.admin')->group(function () {
         Route::get('dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
+        Route::get('laundries/{laundry}/orders', [AdminLaundry::class, 'orders'])->name('laundries.orders');
         Route::resource('laundries', AdminLaundry::class)->except(['show']);
     });
 });
@@ -58,10 +59,12 @@ Route::prefix('laundry')->name('laundry.')->group(function () {
 });
 
 // ─── Public Tracking ──────────────────────────────────────
-Route::get('suivi/{tracking_token}', [TrackingController::class, 'show'])->name('tracking.show');
-Route::get('suivi/{tracking_token}/pdf', [TrackingController::class, 'pdf'])->name('tracking.pdf');
+Route::middleware('throttle:60,1')->group(function () {
+    Route::get('suivi/{tracking_token}', [TrackingController::class, 'show'])->name('tracking.show');
+    Route::get('suivi/{tracking_token}/pdf', [TrackingController::class, 'pdf'])->name('tracking.pdf');
+});
 
-// ─── Redirection Root ─────────────────────────────────────
+// ─── Public Landing Page ─────────────────────────────────
 Route::get('/', function () {
-    return redirect()->route('laundry.login');
+    return view('landing');
 });

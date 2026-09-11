@@ -1,258 +1,57 @@
 @extends('layouts.admin')
-@section('title', 'لوحة الإدارة - LaundryOS')
+
+@section('title', 'لوحة الإدارة')
+
 @section('content')
-
-<style>
-    .stat-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        border: 1px solid rgba(0,0,0,0.05);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    .stat-card .icon-wrapper {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-    }
-    .stat-card:hover .icon-wrapper {
-        transform: scale(1.1) rotate(-5deg);
-    }
-    .stat-number {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.5rem;
-        font-weight: 800;
-    }
-    .table-row {
-        transition: all 0.2s ease;
-    }
-    .table-row:hover {
-        background: linear-gradient(90deg, #f0f4ff 0%, #ffffff 100%);
-        transform: scale(1.01);
-    }
-    .badge-status {
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    .badge-status::before {
-        content: '';
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-    .badge-active::before {
-        background: #10b981;
-        animation: pulse-dot 2s infinite;
-    }
-    .badge-inactive::before {
-        background: #ef4444;
-    }
-    @keyframes pulse-dot {
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.5; transform: scale(0.8); }
-        100% { opacity: 1; transform: scale(1); }
-    }
-    .action-btn {
-        transition: all 0.2s ease;
-        padding: 0.25rem 0.75rem;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
-    }
-    .action-btn:hover {
-        transform: translateY(-2px);
-    }
-</style>
-
-<div class="space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-            <h2 class="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                <span>📊</span>
-                لوحة التحكم
-            </h2>
-            <p class="text-gray-500 mt-1">نظرة عامة على منصة إدارة المغاسل الخاصة بك</p>
+<div class="mx-auto max-w-7xl space-y-7" dir="rtl">
+    <header class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center gap-4">
+            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-lg shadow-slate-200">
+                <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black text-slate-900">لوحة الإدارة</h1>
+                <p class="mt-1 text-sm font-medium text-slate-500">نظرة شاملة على المغاسل والعمليات في المنصة</p>
+            </div>
         </div>
         <div class="flex items-center gap-3">
-            <span class="text-sm text-gray-400">آخر تحديث: {{ now()->format('d/m/Y H:i') }}</span>
-            <button class="bg-gray-100 hover:bg-gray-200 p-2 rounded-lg transition-colors">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-            </button>
+            <span class="hidden rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-500 sm:inline-block">{{ now()->format('d/m/Y H:i') }}</span>
+            <a href="{{ route('admin.laundries.create') }}" class="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-200 transition hover:bg-blue-700">+ مغسلة جديدة</a>
         </div>
-    </div>
+    </header>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="stat-card rounded-2xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">إجمالي المغاسل</p>
-                    <p class="stat-number mt-2">{{ $stats['total_laundries'] }}</p>
-                    <p class="text-xs text-green-500 mt-2">
-                        <span class="font-bold">+12%</span> هذا الشهر
-                    </p>
-                </div>
-                <div class="icon-wrapper bg-blue-50 text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-                    </svg>
-                </div>
-            </div>
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-3xl border border-blue-100 bg-blue-50/70 p-5 shadow-sm"><div class="flex items-start justify-between"><div><p class="text-xs font-black text-blue-600">إجمالي المغاسل</p><p class="mt-2 text-3xl font-black text-blue-950">{{ number_format($stats['total_laundries']) }}</p><p class="mt-2 text-xs font-bold text-blue-500">كل الحسابات المسجلة</p></div><span class="rounded-2xl bg-white p-3 text-blue-600 shadow-sm"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5M9 10h.01M15 10h.01"/></svg></span></div></article>
+        <article class="rounded-3xl border border-emerald-100 bg-emerald-50/70 p-5 shadow-sm"><div class="flex items-start justify-between"><div><p class="text-xs font-black text-emerald-600">المغاسل النشطة</p><p class="mt-2 text-3xl font-black text-emerald-950">{{ number_format($stats['active_laundries']) }}</p><p class="mt-2 text-xs font-bold text-emerald-600">{{ $stats['active_percentage'] }}% من الإجمالي</p></div><span class="rounded-2xl bg-white p-3 text-emerald-600 shadow-sm"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span></div></article>
+        <article class="rounded-3xl border border-violet-100 bg-violet-50/70 p-5 shadow-sm"><div class="flex items-start justify-between"><div><p class="text-xs font-black text-violet-600">إجمالي الطلبات</p><p class="mt-2 text-3xl font-black text-violet-950">{{ number_format($stats['total_orders']) }}</p><p class="mt-2 text-xs font-bold text-violet-500">طلبات كل المغاسل</p></div><span class="rounded-2xl bg-white p-3 text-violet-600 shadow-sm"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span></div></article>
+        <article class="rounded-3xl border border-amber-100 bg-amber-50/70 p-5 shadow-sm"><div class="flex items-start justify-between"><div><p class="text-xs font-black text-amber-700">نشاط اليوم</p><p class="mt-2 text-3xl font-black text-amber-950">{{ number_format($stats['today_orders']) }}</p><p class="mt-2 text-xs font-bold text-amber-600">{{ number_format($stats['total_clients']) }} عميل في المنصة</p></div><span class="rounded-2xl bg-white p-3 text-amber-600 shadow-sm"><svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 2M22 12a10 10 0 11-20 0 10 10 0 0120 0z"/></svg></span></div></article>
+    </section>
+
+    <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 px-6 py-5">
+            <div><h2 class="font-black text-slate-900">أحدث المغاسل</h2><p class="mt-1 text-sm text-slate-500">إدارة الحسابات المسجلة ومتابعة نشاطها</p></div>
+            <a href="{{ route('admin.laundries.index') }}" class="rounded-xl bg-slate-100 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-200">عرض جميع المغاسل</a>
         </div>
-
-        <div class="stat-card rounded-2xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">المغاسل النشطة</p>
-                    <p class="stat-number mt-2">{{ $stats['active_laundries'] }}</p>
-                    <p class="text-xs text-green-500 mt-2">
-                        <span class="font-bold">{{ $stats['active_percentage'] }}%</span> من الإجمالي
-                    </p>
-                </div>
-                <div class="icon-wrapper bg-green-50 text-green-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="stat-card rounded-2xl p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-medium">إجمالي الطلبات</p>
-                    <p class="stat-number mt-2">{{ $stats['total_orders'] }}</p>
-                    <p class="text-xs text-blue-500 mt-2">
-                        <span class="font-bold">+5</span> اليوم
-                    </p>
-                </div>
-                <div class="icon-wrapper bg-violet-50 text-violet-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h3 class="font-semibold text-gray-800 text-lg">إدارة المغاسل</h3>
-                <p class="text-sm text-gray-400 mt-1">قائمة جميع المغاسل المسجلة</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <input type="text" placeholder="بحث..." 
-                        class="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10">
-                    <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </div>
-                <a href="{{ route('admin.laundries.create') }}"
-                   class="bg-gradient-to-r from-blue-600 to-violet-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:shadow-lg transition-all hover:scale-105">
-                    + مغسلة جديدة
-                </a>
-            </div>
-        </div>
-
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">المغسلة</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">البريد الإلكتروني</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الهاتف</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الحالة</th>
-                        <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-50">
+            <table class="w-full min-w-[720px] text-right text-sm">
+                <thead class="border-b border-slate-100 bg-slate-50 text-xs font-black text-slate-500"><tr><th class="px-6 py-4">المغسلة</th><th class="px-6 py-4">معلومات التواصل</th><th class="px-6 py-4 text-center">الطلبات</th><th class="px-6 py-4 text-center">الحالة</th><th class="px-6 py-4">تاريخ التسجيل</th><th class="px-6 py-4 text-left">إجراء</th></tr></thead>
+                <tbody class="divide-y divide-slate-100">
                     @forelse($laundries as $laundry)
-                    <tr class="table-row">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold">
-                                    {{ strtoupper(substr($laundry->name, 0, 2)) }}
-                                </div>
-                                <span class="font-medium text-gray-800">{{ $laundry->name }}</span>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-gray-600 text-sm">{{ $laundry->email }}</td>
-                        <td class="px-6 py-4 text-gray-600 text-sm">{{ $laundry->phone }}</td>
-                        <td class="px-6 py-4">
-                            @if($laundry->is_active)
-                                <span class="badge-status badge-active bg-green-50 text-green-700">
-                                    نشط
-                                </span>
-                            @else
-                                <span class="badge-status badge-inactive bg-red-50 text-red-700">
-                                    غير نشط
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <a href="{{ route('admin.laundries.edit', $laundry->id) }}"
-                                   class="action-btn bg-blue-50 text-blue-600 hover:bg-blue-100">
-                                    تعديل
-                                </a>
-                                <form method="POST" action="{{ route('admin.laundries.destroy', $laundry->id) }}"
-                                      onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذه المغسلة؟')" class="inline">
-                                    @csrf @method('DELETE')
-                                    <button class="action-btn bg-red-50 text-red-600 hover:bg-red-100">
-                                        حذف
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr class="transition-colors hover:bg-slate-50/70">
+                            <td class="px-6 py-4"><div class="flex items-center gap-3">@if($laundry->logo_url)<img src="{{ $laundry->logo_url }}" alt="{{ $laundry->name }}" class="h-10 w-10 rounded-xl border border-slate-200 object-cover" loading="lazy" decoding="async">@else<div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-xs font-black text-blue-600">{{ strtoupper(substr($laundry->name, 0, 2)) }}</div>@endif<div><p class="font-black text-slate-800">{{ $laundry->name }}</p><p class="mt-0.5 text-xs text-slate-400">#{{ $laundry->id }}</p></div></div></td>
+                            <td class="px-6 py-4"><p class="text-slate-700">{{ $laundry->email }}</p><p class="mt-0.5 text-xs text-slate-400">{{ $laundry->phone }}</p></td>
+                            <td class="px-6 py-4 text-center"><span class="rounded-xl bg-violet-50 px-2.5 py-1 text-xs font-black text-violet-700">{{ number_format($laundry->orders_count) }}</span></td>
+                            <td class="px-6 py-4 text-center">@if($laundry->is_active)<span class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>نشط</span>@else<span class="inline-flex items-center gap-1.5 rounded-xl bg-rose-50 px-2.5 py-1 text-xs font-black text-rose-700"><span class="h-1.5 w-1.5 rounded-full bg-rose-500"></span>غير نشط</span>@endif</td>
+                            <td class="px-6 py-4 text-xs font-medium text-slate-500">{{ $laundry->created_at->format('d/m/Y') }}</td>
+                            <td class="px-6 py-4 text-left"><a href="{{ route('admin.laundries.edit', $laundry->id) }}" class="inline-flex rounded-xl bg-blue-50 px-3 py-2 text-xs font-bold text-blue-600 transition hover:bg-blue-100">إدارة</a></td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center gap-3">
-                                <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-                                </svg>
-                                <p class="text-gray-400">لا توجد مغاسل مسجلة</p>
-                                <a href="{{ route('admin.laundries.create') }}" class="text-blue-600 hover:text-blue-800 font-medium">
-                                    أنشئ أول مغسلة لك →
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr><td colspan="6" class="px-6 py-14 text-center"><div class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"><svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/></svg></div><p class="font-bold text-slate-600">لا توجد مغاسل مسجلة بعد</p><a href="{{ route('admin.laundries.create') }}" class="mt-2 inline-block text-sm font-bold text-blue-600 hover:underline">إنشاء أول مغسلة</a></td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($laundries->hasPages())
-        <div class="px-6 py-4 border-t border-gray-100">
-            {{ $laundries->links() }}
-        </div>
-        @endif
-    </div>
+        @if($laundries->hasPages())<div class="border-t border-slate-100 px-6 py-4">{{ $laundries->links() }}</div>@endif
+    </section>
 </div>
-
 @endsection

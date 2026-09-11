@@ -17,6 +17,9 @@ class Order extends Model
         'price',
         'received_at',
         'status',
+        'payment_status',
+        'delivery_required',
+        'delivery_address',
         'tracking_token',
         'notes',
     ];
@@ -24,6 +27,7 @@ class Order extends Model
     protected $casts = [
         'received_at' => 'date',
         'price'       => 'decimal:2',
+        'delivery_required' => 'boolean',
     ];
 
     public function laundry()

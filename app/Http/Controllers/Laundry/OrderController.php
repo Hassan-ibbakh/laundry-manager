@@ -19,6 +19,22 @@ class OrderController extends Controller
         return auth('laundry')->id();
     }
 
+    private function nextOrderNumber(): string
+    {
+        $prefix = 'ORD-' . now()->format('Y') . '-';
+        $lastOrder = Order::where('order_number', 'like', $prefix . '%')
+            ->orderByDesc('id')
+            ->lockForUpdate()
+            ->first();
+
+        $lastSequence = 0;
+        if ($lastOrder && preg_match('/(\d+)$/', $lastOrder->order_number, $matches)) {
+            $lastSequence = (int) $matches[1];
+        }
+
+        return $prefix . str_pad((string) ($lastSequence + 1), 5, '0', STR_PAD_LEFT);
+    }
+
     public function index(Request $request)
     {
         $query = Order::where('laundry_id', $this->laundryId())->with('client');
@@ -29,7 +45,10 @@ class OrderController extends Controller
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('order_number', 'like', '%'.$request->search.'%')
-                  ->orWhereHas('client', fn($c) => $c->where('name', 'like', '%'.$request->search.'%'));
+                  ->orWhereHas('client', function($c) use ($request) {
+                      $c->where('name', 'like', '%'.$request->search.'%')
+                        ->orWhere('phone', 'like', '%'.$request->search.'%');
+                  });
             });
         }
 
@@ -73,19 +92,19 @@ class OrderController extends Controller
             if (is_string($items)) {
                 $decodedItems = json_decode($items, true);
                 if ($decodedItems === null) {
-                    throw new \Exception('الرجاء اختيار عميل أو إضافة عميل جديد بالاسم والهاتف معاً.');
+                    throw new \Exception('الرجاء التحقق من محتوى السلة قبل إرسال الطلب.');
                 }
                 $request->merge(['items' => $decodedItems]);
             }
 
-            // Validation STRICTE : vérifier les données client EN PREMIER
+            // Validation client : un seul champ (nom ou téléphone) est accepté
+            // lorsqu'aucun client existant n'est sélectionné.
             $hasClientId = !empty($request->input('client_id'));
-            $hasClientName = !empty($request->input('client_name'));
-            $hasClientPhone = !empty($request->input('client_phone'));
+            $hasClientName = !empty(trim((string) $request->input('client_name')));
+            $hasClientPhone = !empty(trim((string) $request->input('client_phone')));
 
-            // Si aucun client existant, on DOIT avoir le nom ET le téléphone
-            if (!$hasClientId && (!$hasClientName || !$hasClientPhone)) {
-                throw new \Exception('الرجاء اختيار عميل أو إضافة عميل جديد بالاسم والهاتف معاً.');
+            if (!$hasClientId && !$hasClientName && !$hasClientPhone) {
+                throw new \Exception('الرجاء إدخال اسم العميل أو رقم الهاتف، أو اختيار عميل موجود.');
             }
 
             // Validation du formulaire
@@ -97,17 +116,20 @@ class OrderController extends Controller
                         fn ($query) => $query->where('laundry_id', $this->laundryId())
                     ),
                 ],
-                'client_name'        => $hasClientId ? 'nullable' : 'required|string|max:255',
-                'client_phone'       => $hasClientId ? 'nullable' : 'required|string|max:20',
+                'client_name'        => 'nullable|string|max:255',
+                'client_phone'       => 'nullable|string|max:20',
                 'received_at'        => 'required|date',
                 'notes'              => 'nullable|string|max:1000',
-                'items'              => 'required|array|min:1',
+                'payment_status'     => ['required', Rule::in(['paid', 'unpaid'])],
+                'delivery_required'  => 'required|boolean',
+                'delivery_address'   => 'nullable|required_if:delivery_required,1|string|max:1000',
+                'items'              => 'required|array|min:1|max:100',
                 'items.*.service'    => 'required|array|min:1',
                 'items.*.service.*'  => ['required', Rule::in(['تصبين', 'مصلوح', 'صباغة', 'توصيل'])],
                 'items.*.type'       => 'required|string|max:255',
                 'items.*.color'      => 'nullable|string|max:255',
-                'items.*.quantity'   => 'required|integer|min:1',
-                'items.*.unit_price' => 'required|numeric|min:0',
+                'items.*.quantity'   => 'required|integer|min:1|max:10000',
+                'items.*.unit_price' => 'required|numeric|min:0|max:1000000',
             ], [
                 'items.required' => 'الرجاء إضافة قطعة واحدة على الأقل.',
                 'items.min' => 'الرجاء إضافة قطعة واحدة على الأقل.',
@@ -120,29 +142,40 @@ class OrderController extends Controller
                 'items.*.unit_price.required' => 'السعر مطلوب.',
                 'items.*.unit_price.min' => 'السعر يجب أن يكون موجب.',
                 'client_id.exists' => 'العميل غير موجود.',
-                'client_name.required' => 'اسم العميل مطلوب.',
-                'client_phone.required' => 'رقم الهاتف مطلوب.',
                 'received_at.required' => 'تاريخ الاستلام مطلوب.',
                 'received_at.date' => 'تاريخ الاستلام يجب أن يكون صحيح.',
+                'delivery_address.required_if' => 'عنوان التوصيل مطلوب عندما يختار العميل التوصيل.',
+                'delivery_address.max' => 'عنوان التوصيل طويل جداً.',
             ]);
 
             // Gestion du client
             $clientId = $validated['client_id'] ?? null;
 
             if (!$clientId) {
-                $clientName = $validated['client_name'];
-                $clientPhone = $validated['client_phone'];
+                $clientName = trim((string) ($validated['client_name'] ?? ''));
+                $clientPhone = trim((string) ($validated['client_phone'] ?? ''));
 
-                // Vérifier si le client existe déjà par téléphone
-                $client = Client::where('laundry_id', $this->laundryId())
-                    ->where('phone', $clientPhone)
-                    ->first();
+                // Si le téléphone existe, on cherche d'abord par téléphone.
+                $client = null;
+
+                if ($clientPhone !== '') {
+                    $client = Client::where('laundry_id', $this->laundryId())
+                        ->where('phone', $clientPhone)
+                        ->first();
+                }
+
+                // Sinon, on tente de retrouver le client par nom.
+                if (!$client && $clientName !== '') {
+                    $client = Client::where('laundry_id', $this->laundryId())
+                        ->where('name', $clientName)
+                        ->first();
+                }
 
                 if (!$client) {
                     $client = Client::create([
                         'laundry_id' => $this->laundryId(),
                         'name'       => $clientName,
-                        'phone'      => $clientPhone,
+                        'phone'      => $clientPhone !== '' ? $clientPhone : '',
                     ]);
                 }
 
@@ -178,18 +211,7 @@ class OrderController extends Controller
                         // lockForUpdate() verrouille les lignes correspondantes le temps
                         // de la transaction : aucune autre requête ne peut lire/générer
                         // le même numéro tant que celle-ci n'est pas terminée
-                        $lastOrder = Order::orderBy('order_number', 'desc')
-                            ->lockForUpdate()
-                            ->first();
-
-                        if ($lastOrder) {
-                            preg_match('/(\d+)$/', $lastOrder->order_number, $matches);
-                            $lastNumber = isset($matches[1]) ? (int) $matches[1] : 0;
-                            $number = str_pad($lastNumber + 1, 5, '0', STR_PAD_LEFT);
-                        } else {
-                            $number = '00001';
-                        }
-                        $orderNumber = $number;
+                        $orderNumber = $this->nextOrderNumber();
 
                         $orderData = [
                             'laundry_id'     => $this->laundryId(),
@@ -199,6 +221,9 @@ class OrderController extends Controller
                             'notes'          => $validated['notes'] ?? null,
                             'price'          => $total,
                             'status'         => 'received',
+                            'payment_status' => $validated['payment_status'],
+                            'delivery_required' => (bool) $validated['delivery_required'],
+                            'delivery_address' => $validated['delivery_address'] ?? null,
                             'order_number'   => $orderNumber,
                             'tracking_token' => Str::random(32),
                         ];
@@ -233,8 +258,9 @@ class OrderController extends Controller
                 }
             }
 
-            // Open WhatsApp only after the order has been created successfully.
-            return redirect()->route('laundry.orders.whatsapp', $order->id);
+            // Afficher le bon de commande après un enregistrement réussi.
+            return redirect()->route('laundry.orders.show', $order->id)
+                ->with('success', 'تم حفظ الطلب بنجاح.');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
@@ -242,9 +268,9 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             Log::error('Order creation failed.', ['exception' => $e]);
 
-            $message = $e->getMessage() ?: 'حدث خطأ أثناء إنشاء الطلب.';
-
-            return back()->withErrors(['error' => $message])->withInput();
+            return back()->withErrors([
+                'error' => 'حدث خطأ أثناء إنشاء الطلب. يرجى المحاولة مرة أخرى.',
+            ])->withInput();
         }
     }
 

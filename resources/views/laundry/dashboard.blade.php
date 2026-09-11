@@ -1,181 +1,77 @@
 @extends('layouts.laundry')
-@section('title', 'لوحة المغسلة')
+
+@section('title', 'التقرير اليومي')
+
 @section('content')
+<style>
+    @media print { .no-print { display: none !important; } body { background: #fff !important; } }
+</style>
 
-{{-- En-tête avec logo --}}
-<div class="flex flex-wrap gap-4 items-center justify-between mb-6">
-    <div class="flex items-center gap-4">
-        {{-- Logo de la blanchisserie --}}
-        @php
-            $laundry = auth('laundry')->user();
-        @endphp
-        @if($laundry->logo_url)
-            <img src="{{ $laundry->logo_url }}" 
-                 alt="Logo de {{ $laundry->name }}" 
-                 class="h-14 w-14 object-cover rounded-xl border-2 border-gray-200 shadow-sm">
-        @else
-            <div class="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-xl shadow-sm">
-                {{ strtoupper(substr($laundry->name, 0, 2)) }}
+<div class="max-w-6xl mx-auto pb-16" dir="rtl">
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
             </div>
-        @endif
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">{{ $laundry->name }}</h2>
-            <p class="text-sm text-gray-500">📊 لوحة التحكم</p>
-        </div>
-    </div>
-    <div class="text-sm text-gray-400">
-        {{ now()->format('d/m/Y H:i') }}
-    </div>
-</div>
-
-{{-- Stats --}}
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-5 border-r-4 border-yellow-400 hover:shadow-md transition">
-        <p class="text-xs text-gray-500 mb-1">📥 تم الاستلام</p>
-        <p class="text-3xl font-bold text-yellow-500">{{ $stats['received'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border-r-4 border-blue-400 hover:shadow-md transition">
-        <p class="text-xs text-gray-500 mb-1">🧺 قيد الغسيل</p>
-        <p class="text-3xl font-bold text-blue-500">{{ $stats['cleaning'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border-r-4 border-green-400 hover:shadow-md transition">
-        <p class="text-xs text-gray-500 mb-1">✅ جاهز للاستلام</p>
-        <p class="text-3xl font-bold text-green-500">{{ $stats['ready'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-5 border-r-4 border-gray-400 hover:shadow-md transition">
-        <p class="text-xs text-gray-500 mb-1">📦 تم التسليم</p>
-        <p class="text-3xl font-bold text-gray-500">{{ $stats['delivered'] ?? 0 }}</p>
-    </div>
-</div>
-
-{{-- Second row stats --}}
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-white rounded-xl shadow-sm p-4 border-r-4 border-purple-400">
-        <p class="text-xs text-gray-500 mb-1">📋 إجمالي الطلبات</p>
-        <p class="text-2xl font-bold text-purple-500">{{ $stats['total'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-4 border-r-4 border-pink-400">
-        <p class="text-xs text-gray-500 mb-1">👥 إجمالي العملاء</p>
-        <p class="text-2xl font-bold text-pink-500">{{ $stats['total_clients'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-4 border-r-4 border-orange-400">
-        <p class="text-xs text-gray-500 mb-1">📅 طلبات اليوم</p>
-        <p class="text-2xl font-bold text-orange-500">{{ $stats['today_orders'] ?? 0 }}</p>
-    </div>
-    <div class="bg-white rounded-xl shadow-sm p-4 border-r-4 border-indigo-400">
-        <p class="text-xs text-gray-500 mb-1">⏳ قيد المعالجة</p>
-        <p class="text-2xl font-bold text-indigo-500">{{ $stats['pending_orders'] ?? 0 }}</p>
-    </div>
-</div>
-
-{{-- عمودان: الطلبات الحديثة والعملاء الجدد --}}
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    {{-- Commandes récentes --}}
-    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b flex flex-wrap justify-between items-center gap-2">
             <div>
-                <h3 class="font-semibold text-gray-700">📋 آخر الطلبات</h3>
-                <p class="text-xs text-gray-400">أحدث 10 طلبات</p>
+                <h1 class="text-2xl font-black text-slate-900">التقرير اليومي</h1>
+                <p class="text-sm font-bold text-slate-500 mt-0.5">متابعة المداخيل والعمليات اليومية</p>
             </div>
-            <a href="{{ route('laundry.orders.create') }}"
-               class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-1">
-                <span>+</span> طلب جديد
-            </a>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-gray-600">
-                    <tr>
-                        <th class="px-4 py-3 text-right">رقم الطلب</th>
-                        <th class="px-4 py-3 text-right">العميل</th>
-                        <th class="px-4 py-3 text-right">الخدمة</th>
-                        <th class="px-4 py-3 text-right">المبلغ</th>
-                        <th class="px-4 py-3 text-right">الحالة</th>
-                        <th class="px-4 py-3 text-right">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @forelse($orders as $order)
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 font-mono text-xs font-bold text-gray-700">{{ $order->order_number }}</td>
-                        <td class="px-4 py-3">{{ $order->client->name ?? '—' }}</td>
-                        <td class="px-4 py-3">{{ $order->service }}</td>
-                        <td class="px-4 py-3 font-semibold">{{ number_format($order->price, 2) }} د.م</td>
-                        <td class="px-4 py-3">
-                            @php
-                                $colors = [
-                                    'received'  => 'bg-yellow-100 text-yellow-700',
-                                    'cleaning'  => 'bg-blue-100 text-blue-700',
-                                    'ready'     => 'bg-green-100 text-green-700',
-                                    'delivered' => 'bg-gray-100 text-gray-700',
-                                ];
-                                $labels = [
-                                    'received'  => '📥 تم الاستلام',
-                                    'cleaning'  => '🧺 قيد الغسيل',
-                                    'ready'     => '✅ جاهز',
-                                    'delivered' => '📦 تم التسليم',
-                                ];
-                            @endphp
-                            <span class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-700' }}">
-                                {{ $labels[$order->status] ?? $order->status }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            <a href="{{ route('laundry.orders.show', $order->id) }}"
-                               class="text-blue-600 hover:text-blue-800 text-xs font-medium transition">
-                                عرض
-                            </a>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">
-                            <div class="text-4xl mb-2">📋</div>
-                            <p>لا توجد طلبات بعد</p>
-                            <a href="{{ route('laundry.orders.create') }}" class="text-blue-600 hover:underline text-sm mt-2 inline-block">
-                                إنشاء أول طلب →
-                            </a>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+        <div class="flex items-center gap-2 no-print">
+            <form method="GET" action="{{ route('laundry.dashboard') }}">
+                <input type="date" name="date" value="{{ $selectedDate }}" onchange="this.form.submit()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+            </form>
+            @if($selectedDate !== now()->toDateString())
+                <a href="{{ route('laundry.dashboard') }}" class="px-3 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-200">اليوم</a>
+            @endif
+            <button type="button" onclick="window.print()" class="p-2.5 bg-slate-50 border border-slate-200 text-slate-600 hover:text-blue-600 rounded-xl" title="طباعة التقرير">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            </button>
+            <a href="{{ route('laundry.orders.create') }}" class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm">+ طلب جديد</a>
         </div>
-        <div class="px-6 py-3 border-t text-xs text-gray-400">
-            عرض آخر {{ $orders->count() }}
-        </div>
-    </div>
+    </header>
 
-    {{-- Clients récents --}}
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-5 py-4 border-b">
-            <h3 class="font-semibold text-gray-700">👤 العملاء الجدد</h3>
-            <p class="text-xs text-gray-400">5 derniers clients</p>
-        </div>
-        <div class="p-4 space-y-3 max-h-80 overflow-y-auto">
-            @forelse($recentClients as $client)
-                <div class="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 transition">
-                    <div>
-                        <p class="font-medium text-gray-800 text-sm">{{ $client->name }}</p>
-                        <p class="text-xs text-gray-400">{{ $client->phone }}</p>
-                    </div>
-                    <span class="text-xs text-gray-400">{{ $client->created_at->diffForHumans() }}</span>
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-blue-50/70 p-6 rounded-3xl border border-blue-100 shadow-sm"><p class="text-blue-600 text-xs font-black mb-2">إجمالي المداخيل</p><p class="text-3xl font-black text-blue-900">{{ number_format($totalRevenue, 2) }} <span class="text-lg">د.م</span></p><p class="text-[11px] font-bold text-blue-500 mt-2">طلبات يوم {{ \Carbon\Carbon::parse($selectedDate)->format('d/m/Y') }}</p></div>
+        <div class="bg-emerald-50/70 p-6 rounded-3xl border border-emerald-100 shadow-sm"><p class="text-emerald-600 text-xs font-black mb-2">تم قبضها</p><p class="text-3xl font-black text-emerald-900">{{ number_format($paidRevenue, 2) }} <span class="text-lg">د.م</span></p><p class="text-[11px] font-bold text-emerald-600 mt-2">المبالغ المدفوعة</p></div>
+        <div class="bg-rose-50/70 p-6 rounded-3xl border border-rose-100 shadow-sm"><p class="text-rose-600 text-xs font-black mb-2">في الذمة</p><p class="text-3xl font-black text-rose-900">{{ number_format($unpaidRevenue, 2) }} <span class="text-lg">د.م</span></p><p class="text-[11px] font-bold text-rose-500 mt-2">مبالغ غير مدفوعة</p></div>
+        <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 shadow-sm"><p class="text-slate-600 text-xs font-black mb-2">عدد الطلبات</p><p class="text-3xl font-black text-slate-900">{{ $dailyCount }} <span class="text-lg">طلب</span></p><p class="text-[11px] font-bold text-slate-400 mt-2">الطلبات المسجلة</p></div>
+    </section>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <section class="lg:col-span-2 space-y-4">
+            <h2 class="text-lg font-black text-slate-900">تفاصيل العمليات ({{ $dailyCount }})</h2>
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-50 text-slate-400 text-xs font-black"><tr><th class="px-5 py-4">الرقم / العميل</th><th class="px-5 py-4">القطع</th><th class="px-5 py-4 text-center">الحالة</th><th class="px-5 py-4 text-center">الدفع</th><th class="px-5 py-4 text-left">المبلغ</th><th class="px-5 py-4 text-center no-print">تفاصيل</th></tr></thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($dailyOrders as $order)
+                                @php($statusClasses = ['received'=>'bg-amber-100 text-amber-800','cleaning'=>'bg-blue-100 text-blue-800','ready'=>'bg-emerald-100 text-emerald-800','delivered'=>'bg-slate-100 text-slate-700'])
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="px-5 py-4"><p class="font-mono font-black text-slate-900">{{ $order->order_number }}</p><p class="text-xs font-bold text-slate-500 mt-0.5">{{ $order->client->name ?? 'بدون اسم' }}</p></td>
+                                    <td class="px-5 py-4 text-xs font-bold text-slate-600">{{ $order->items->sum('quantity') }} قطع</td>
+                                    <td class="px-5 py-4 text-center"><span class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-black {{ $statusClasses[$order->status] ?? 'bg-slate-100' }}">{{ $statuses[$order->status]['label'] ?? $order->status }}</span></td>
+                                    <td class="px-5 py-4 text-center"><span class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-black {{ $order->payment_status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">{{ $order->payment_status === 'paid' ? 'مدفوع' : 'غير مدفوع' }}</span></td>
+                                    <td class="px-5 py-4 text-left font-black text-blue-600">{{ number_format($order->price, 2) }} د.م</td>
+                                    <td class="px-5 py-4 text-center no-print"><a href="{{ route('laundry.orders.show', $order->id) }}" class="text-blue-600 hover:underline text-xs font-bold">عرض</a></td>
+                                </tr>
+                            @empty
+                                <tr><td colspan="6" class="px-6 py-12 text-center text-slate-400"><p class="font-bold text-slate-600">لا توجد عمليات مسجلة لهذا التاريخ</p><p class="text-xs mt-1">اختر يوماً آخر أو أنشئ طلباً جديداً</p></td></tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-            @empty
-                <div class="text-center py-6 text-gray-400">
-                    <div class="text-3xl mb-2">👤</div>
-                    <p class="text-sm">لا يوجد عملاء بعد</p>
-                </div>
-            @endforelse
-        </div>
-        @if($recentClients->count() > 0)
-            <div class="px-5 py-2 border-t">
-                <a href="{{ route('laundry.clients.index') }}" class="text-blue-600 hover:text-blue-800 text-xs font-medium">
-                    عرض جميع العملاء →
-                </a>
             </div>
-        @endif
+        </section>
+
+        <aside class="space-y-6">
+            <section class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm"><h3 class="text-sm font-black text-slate-900 mb-5">حالات طلبات اليوم</h3><div class="space-y-4">@foreach($statuses as $status)<div class="space-y-1.5"><div class="flex justify-between text-xs font-black"><span class="text-slate-600">{{ $status['label'] }}</span><span class="text-slate-900">{{ $status['count'] }} <span class="text-[10px] text-slate-400">({{ $status['percentage'] }}%)</span></span></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full {{ $status['color'] }} rounded-full" style="width: {{ $status['percentage'] }}%"></div></div></div>@endforeach</div></section>
+            <section class="bg-slate-900 p-6 rounded-3xl text-white shadow-xl shadow-slate-200"><p class="text-xs font-black tracking-wider opacity-60 mb-4">ملخص القطع</p><p class="text-4xl font-black">{{ $totalPieces }}</p><p class="text-xs text-slate-400 font-bold mt-1">إجمالي القطع المعالجة اليوم</p></section>
+            <section class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm"><div class="flex items-center justify-between mb-4"><h3 class="text-sm font-black text-slate-900">العملاء الجدد</h3><a href="{{ route('laundry.clients.index') }}" class="text-xs font-bold text-blue-600 hover:underline">عرض الكل</a></div><div class="divide-y divide-slate-100">@forelse($recentClients as $client)<div class="py-3 flex items-center justify-between first:pt-0"><div><p class="font-bold text-slate-900 text-xs">{{ $client->name }}</p><p class="text-[11px] font-mono text-slate-400 mt-0.5">{{ $client->phone }}</p></div><span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">{{ $client->created_at->diffForHumans() }}</span></div>@empty<p class="text-xs text-slate-400 text-center py-4">لا يوجد عملاء جدد</p>@endforelse</div></section>
+            <div class="grid grid-cols-2 gap-3 text-center"><div class="bg-white border border-slate-200 rounded-2xl p-3"><p class="text-xl font-black text-slate-900">{{ $globalStats['all_orders'] }}</p><p class="text-[10px] text-slate-500 font-bold">كل الطلبات</p></div><div class="bg-white border border-slate-200 rounded-2xl p-3"><p class="text-xl font-black text-slate-900">{{ $globalStats['all_clients'] }}</p><p class="text-[10px] text-slate-500 font-bold">كل العملاء</p></div></div>
+        </aside>
     </div>
 </div>
-
 @endsection

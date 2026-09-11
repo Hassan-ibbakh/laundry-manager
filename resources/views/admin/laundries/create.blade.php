@@ -201,7 +201,7 @@
                         </svg>
                         كلمة المرور
                     </label>
-                    <input type="password" name="password" required
+                    <input type="password" name="password" required minlength="10"
                         placeholder="الحد الأدنى 6 أحرف"
                         class="{{ $errors->has('password') ? 'error' : '' }}">
                     <p class="text-xs text-gray-400 mt-1">يجب أن تحتوي كلمة المرور على 6 أحرف على الأقل</p>

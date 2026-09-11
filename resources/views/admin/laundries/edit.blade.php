@@ -36,7 +36,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">الشعار الحالي</label>
             @if($laundry->logo)
                 <div class="mb-2">
-                    <img src="{{ $laundry->logo_url }}" alt="Logo de {{ $laundry->name }}" class="h-16 w-16 object-cover rounded-lg border border-gray-200">
+                    <img src="{{ $laundry->logo_url }}" alt="Logo de {{ $laundry->name }}" class="h-16 w-16 object-cover rounded-lg border border-gray-200" loading="lazy" decoding="async">
                 </div>
             @else
                 <p class="text-sm text-gray-400">لا يوجد شعار</p>
@@ -53,7 +53,7 @@
 
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور الجديدة (اتركها فارغة إن لم تريد تغييرها)</label>
-            <input type="password" name="password"
+            <input type="password" name="password" minlength="10"
                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div class="mb-6 flex items-center gap-2">

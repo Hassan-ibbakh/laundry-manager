@@ -18,7 +18,7 @@
     <div class="flex-1 min-w-[150px]">
         <label class="block text-xs text-gray-500 mb-1">بحث</label>
         <input type="text" name="search" value="{{ request('search') }}"
-            placeholder="رقم الطلب أو اسم العميل"
+            placeholder="رقم الطلب، اسم العميل أو الهاتف"
             class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
 
