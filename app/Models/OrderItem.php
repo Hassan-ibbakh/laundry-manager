@@ -14,6 +14,7 @@ class OrderItem extends Model
         'service',        // ← ajouté
         'pieces_type',
         'pieces_color',
+        'dimensions',
         'quantity',
         'unit_price',
         'total_price',

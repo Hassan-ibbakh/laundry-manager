@@ -72,7 +72,7 @@
                             <div class="flex items-center gap-2">
                                 <a href="{{ route('admin.laundries.orders', $laundry->id) }}"
                                    class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors">
-                                    📦 الطلبات
+                                    الطلبات
                                 </a>
                                 <span class="text-gray-300">|</span>
                                 <a href="{{ route('admin.laundries.edit', $laundry->id) }}"

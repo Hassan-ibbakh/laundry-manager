@@ -7,7 +7,7 @@
         <a href="{{ route('admin.laundries.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
             ← العودة إلى قائمة المغاسل
         </a>
-        <h2 class="text-2xl font-bold text-gray-800 mt-2">📦 طلبات {{ $laundry->name }}</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mt-2">طلبات {{ $laundry->name }}</h2>
         <p class="text-sm text-gray-500 mt-1">جميع الطلبات المسجلة لهذه المغسلة</p>
     </div>
     <div class="bg-blue-50 text-blue-700 px-4 py-3 rounded-lg text-sm font-semibold">
@@ -38,10 +38,10 @@
                         'delivered' => 'bg-gray-100 text-gray-700',
                     ];
                     $labels = [
-                        'received' => '📥 تم الاستلام',
-                        'cleaning' => '🧺 قيد الغسيل',
-                        'ready' => '✅ جاهز',
-                        'delivered' => '📦 تم التسليم',
+                        'received' => 'تم الاستلام',
+                        'cleaning' => 'قيد الغسيل',
+                        'ready' => 'جاهز',
+                        'delivered' => 'تم التسليم',
                     ];
                 @endphp
                 <tr class="hover:bg-blue-50/50 transition-colors">
@@ -59,7 +59,6 @@
                 @empty
                 <tr>
                     <td colspan="6" class="px-6 py-12 text-center text-gray-400">
-                        <div class="text-4xl mb-2">📦</div>
                         <p class="text-lg font-medium">لا توجد طلبات لهذه المغسلة</p>
                     </td>
                 </tr>

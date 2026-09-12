@@ -150,19 +150,15 @@
                     <ul class="space-y-5">
                         <li class="flex items-center justify-end gap-3 text-gray-600">
                             <span>الوراق، دفتار، الصبون، المصلوح، الكليان...</span>
-                            <span class="text-red-500">❌</span>
                         </li>
                         <li class="flex items-center justify-end gap-3 text-gray-600">
                             <span>الحوايج تلفو الكليان كايجي غير يسول</span>
-                            <span class="text-red-500">❌</span>
                         </li>
                         <li class="flex items-center justify-end gap-3 text-gray-600">
                             <span>كلشي خصك تعقل عليه نتا</span>
-                            <span class="text-red-500">❌</span>
                         </li>
                         <li class="flex items-center justify-end gap-3 text-gray-600">
                             <span>مايقدر حتى واحد يخدم فبلاصتك</span>
-                            <span class="text-red-500">❌</span>
                         </li>
                     </ul>
                 </div>

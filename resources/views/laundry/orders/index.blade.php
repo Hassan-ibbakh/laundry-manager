@@ -4,7 +4,7 @@
 
 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
     <div>
-        <h2 class="text-2xl font-bold text-gray-800">📦 الطلبات</h2>
+        <h2 class="text-2xl font-bold text-gray-800">الطلبات</h2>
         <p class="text-sm text-gray-500 mt-1">قائمة جميع الطلبات</p>
     </div>
     <a href="{{ route('laundry.orders.create') }}"
@@ -26,10 +26,10 @@
         <label class="block text-xs text-gray-500 mb-1">الحالة</label>
         <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">الكل</option>
-            <option value="received"  {{ request('status') == 'received'  ? 'selected' : '' }}>📥 تم الاستلام</option>
-            <option value="cleaning"  {{ request('status') == 'cleaning'  ? 'selected' : '' }}>🧺 قيد الغسيل</option>
-            <option value="ready"     {{ request('status') == 'ready'     ? 'selected' : '' }}>✅ جاهز</option>
-            <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>📦 تم التسليم</option>
+            <option value="received"  {{ request('status') == 'received'  ? 'selected' : '' }}>تم الاستلام</option>
+            <option value="cleaning"  {{ request('status') == 'cleaning'  ? 'selected' : '' }}>قيد الغسيل</option>
+            <option value="ready"     {{ request('status') == 'ready'     ? 'selected' : '' }}>جاهز</option>
+            <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>تم التسليم</option>
         </select>
     </div>
 
@@ -41,7 +41,7 @@
 
     <div class="flex gap-2">
         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition">
-            🔍 بحث
+            بحث
         </button>
         @if(request()->hasAny(['search', 'status', 'date']))
             <a href="{{ route('laundry.orders.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm transition">
@@ -82,10 +82,10 @@
                                 'delivered' => 'bg-gray-100 text-gray-700',
                             ];
                             $labels = [
-                                'received'  => '📥 تم الاستلام',
-                                'cleaning'  => '🧺 قيد الغسيل',
-                                'ready'     => '✅ جاهز',
-                                'delivered' => '📦 تم التسليم',
+                                'received'  => 'تم الاستلام',
+                                'cleaning'  => 'قيد الغسيل',
+                                'ready'     => 'جاهز',
+                                'delivered' => 'تم التسليم',
                             ];
                         @endphp
                         <span class="px-2 py-1 rounded-full text-xs font-medium {{ $colors[$order->status] ?? 'bg-gray-100 text-gray-700' }}">
@@ -99,7 +99,6 @@
                 @empty
                 <tr>
                     <td colspan="4" class="px-6 py-12 text-center text-gray-400">
-                        <div class="text-4xl mb-2">📦</div>
                         <p class="text-lg font-medium">لا توجد طلبات</p>
                         <p class="text-sm mt-1">قم بإنشاء أول طلب لك</p>
                         <a href="{{ route('laundry.orders.create') }}" class="text-blue-600 hover:underline text-sm mt-3 inline-block">

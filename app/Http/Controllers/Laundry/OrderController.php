@@ -125,9 +125,10 @@ class OrderController extends Controller
                 'delivery_address'   => 'nullable|required_if:delivery_required,1|string|max:1000',
                 'items'              => 'required|array|min:1|max:100',
                 'items.*.service'    => 'required|array|min:1',
-                'items.*.service.*'  => ['required', Rule::in(['تصبين', 'مصلوح', 'صباغة', 'توصيل'])],
+                'items.*.service.*'  => ['required', Rule::in(['تصبين', 'مصلوح', 'صباغة', 'أفرشة', 'توصيل'])],
                 'items.*.type'       => 'required|string|max:255',
                 'items.*.color'      => 'nullable|string|max:255',
+                'items.*.dimensions' => 'nullable|string|max:50',
                 'items.*.quantity'   => 'required|integer|min:1|max:10000',
                 'items.*.unit_price' => 'required|numeric|min:0|max:1000000',
             ], [
@@ -184,9 +185,30 @@ class OrderController extends Controller
 
             // Calcul du total
             $total = 0;
-            foreach ($validated['items'] as $item) {
+            foreach ($validated['items'] as $index => &$item) {
+                if (in_array('أفرشة', $item['service'], true)) {
+                    $dimensions = (string) ($item['dimensions'] ?? '');
+
+                    if (!preg_match('/^([0-9]+(?:\.[0-9]+)?)x([0-9]+(?:\.[0-9]+)?)m$/', $dimensions, $matches)) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            "items.$index.dimensions" => 'الطول والعرض مطلوبان لخدمة الأفرشة.',
+                        ]);
+                    }
+
+                    $length = (float) $matches[1];
+                    $width = (float) $matches[2];
+                    if ($length <= 0 || $width <= 0) {
+                        throw \Illuminate\Validation\ValidationException::withMessages([
+                            "items.$index.dimensions" => 'أبعاد الأفرشة يجب أن تكون أكبر من صفر.',
+                        ]);
+                    }
+
+                    $item['unit_price'] = round($length * $width * 15, 2);
+                }
+
                 $total += $item['quantity'] * $item['unit_price'];
             }
+            unset($item);
 
             // Services uniques
             $servicesList = collect($validated['items'])
@@ -235,6 +257,7 @@ class OrderController extends Controller
                                 'service'      => implode(' + ', $item['service']),
                                 'pieces_type'  => $item['type'],
                                 'pieces_color' => $item['color'] ?? null,
+                                'dimensions'   => $item['dimensions'] ?? null,
                                 'quantity'     => $item['quantity'],
                                 'unit_price'   => $item['unit_price'],
                                 'total_price'  => $item['quantity'] * $item['unit_price'],
@@ -250,7 +273,7 @@ class OrderController extends Controller
                     // Code 23000 = violation de contrainte d'intégrité (ex: order_number dupliqué)
                     $isDuplicate = $e->getCode() === '23000';
                     if ($isDuplicate && $attempt < $maxAttempts) {
-                        Log::warning("⚠️ Collision order_number détectée, nouvelle tentative ($attempt/$maxAttempts)");
+                        Log::warning("Collision order_number détectée, nouvelle tentative ($attempt/$maxAttempts)");
                         usleep(50000); // 50ms avant de réessayer
                         continue;
                     }
@@ -324,19 +347,19 @@ class OrderController extends Controller
         $trackingUrl = route('tracking.show', $order->tracking_token);
 
         $statusLabels = [
-            'received'  => '📥 تم الاستلام',
-            'cleaning'  => '🧺 قيد الغسيل',
-            'ready'     => '✅ جاهز للاستلام',
-            'delivered' => '📦 تم التسليم',
+            'received'  => 'تم الاستلام',
+            'cleaning'  => 'قيد الغسيل',
+            'ready'     => 'جاهز للاستلام',
+            'delivered' => 'تم التسليم',
         ];
 
-        $message = "🧺 *LaundryOS* - Suivi de commande\n\n"
-            . "👤 Client : {$order->client->name}\n"
-            . "📋 Commande : {$order->order_number}\n"
-            . "📊 Statut : {$statusLabels[$order->status]}\n"
-            . "💰 Prix total : {$order->price} DH\n"
-            . "📅 Date : " . date('d/m/Y', strtotime((string) $order->received_at)) . "\n\n"
-            . "🔗 Suivez votre commande :\n{$trackingUrl}";
+        $message = "*LaundryOS* - Suivi de commande\n\n"
+            . "Client : {$order->client->name}\n"
+            . "Commande : {$order->order_number}\n"
+            . "Statut : {$statusLabels[$order->status]}\n"
+            . "Prix total : {$order->price} DH\n"
+            . "Date : " . date('d/m/Y', strtotime((string) $order->received_at)) . "\n\n"
+            . "Suivez votre commande :\n{$trackingUrl}";
 
         $phone = preg_replace('/\D/', '', $order->client->phone);
         $url = 'https://wa.me/'.$phone.'?text='.urlencode($message);
