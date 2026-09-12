@@ -282,7 +282,6 @@
                         <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500">
                         تذكرني
                     </label>
-                    <a href="#" class="helper-text text-blue-600 hover:text-blue-800 font-medium">هل نسيت كلمة المرور؟</a>
                 </div>
 
                 <button type="submit" class="btn-login w-full text-white rounded-xl font-semibold relative">

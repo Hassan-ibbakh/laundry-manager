@@ -329,6 +329,29 @@ class OrderController extends Controller
         );
     }
 
+    public function ticket(int $id)
+    {
+        $order = Order::where('laundry_id', $this->laundryId())
+            ->with(['client', 'items', 'laundry'])
+            ->findOrFail($id);
+
+        $pdf = new TCPDF('P', 'mm', [80, 220], true, 'UTF-8', false);
+        $pdf->setRTL(true);
+        $pdf->SetCreator(config('app.name'));
+        $pdf->SetTitle('Ticket ' . $order->order_number);
+        $pdf->SetMargins(4, 4, 4);
+        $pdf->SetAutoPageBreak(true, 4);
+        $pdf->AddPage();
+        $pdf->SetFont('dejavusans', '', 8);
+        $pdf->writeHTML(view('laundry.orders.ticket', compact('order'))->render(), true, false, true, false, '');
+        $contents = $pdf->Output('ticket-' . $order->order_number . '.pdf', 'S');
+
+        return response($contents, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="ticket-' . $order->order_number . '.pdf"',
+        ]);
+    }
+
     public function updateStatus(Request $request, int $id)
     {
         $order = Order::where('laundry_id', $this->laundryId())->findOrFail($id);

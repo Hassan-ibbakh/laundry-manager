@@ -53,6 +53,7 @@ Route::prefix('laundry')->name('laundry.')->group(function () {
         Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
         Route::get('orders/{id}', [OrderController::class, 'show'])->name('orders.show');
         Route::get('orders/{id}/pdf', [OrderController::class, 'pdf'])->name('orders.pdf');
+        Route::get('orders/{id}/ticket', [OrderController::class, 'ticket'])->name('orders.ticket');
         Route::patch('orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
         Route::get('orders/{id}/whatsapp', [OrderController::class, 'whatsapp'])->name('orders.whatsapp');
     });

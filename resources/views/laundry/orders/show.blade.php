@@ -113,6 +113,11 @@
 
         {{-- Actions --}}
         <div class="flex flex-wrap gap-3 pt-2">
+            <a href="{{ route('laundry.orders.ticket', $order->id) }}" target="_blank"
+               class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                طباعة التذكرة
+            </a>
             <a href="{{ route('laundry.orders.pdf', $order->id) }}"
                class="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50 hover:border-gray-300 transition-colors">
                 <i data-lucide="download" class="w-4 h-4 text-red-600"></i>

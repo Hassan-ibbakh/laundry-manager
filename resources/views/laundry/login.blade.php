@@ -208,7 +208,7 @@
 
         <!-- Login Card -->
         <div class="login-panel bg-white rounded-2xl shadow-2xl">
-            <h2 class="card-title font-bold text-center text-gray-800 mb-2">🔐 تسجيل الدخول</h2>
+            <h2 class="card-title font-bold text-center text-gray-800 mb-2">تسجيل الدخول</h2>
             <p class="card-subtitle text-center text-gray-500 mb-6">دخول لوحة إدارة المغسلة</p>
 
             @if($errors->any())
@@ -235,7 +235,7 @@
                 </div>
 
                 <div class="input-group mb-6">
-                    <label class="block font-medium text-gray-700 mb-1">🔑 كلمة المرور</label>
+                    <label class="block font-medium text-gray-700 mb-1">كلمة المرور</label>
                     <input type="password" name="password" required autocomplete="current-password"
                         placeholder="••••••••"
                         class="w-full border-2 border-gray-200 rounded-xl px-4 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
