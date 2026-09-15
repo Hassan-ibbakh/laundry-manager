@@ -176,7 +176,7 @@ class OrderController extends Controller
                     $client = Client::create([
                         'laundry_id' => $this->laundryId(),
                         'name'       => $clientName,
-                        'phone'      => $clientPhone !== '' ? $clientPhone : '',
+                        'phone'      => $clientPhone !== '' ? $clientPhone : null,
                     ]);
                 }
 
