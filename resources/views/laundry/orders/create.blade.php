@@ -431,6 +431,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPaid = false;
     let cart = [];
 
+    function normalizeQuantity(value) {
+        return Math.round(Number(value) * 10) / 10;
+    }
+
     // --- Génération de la grille des types de pièces ---
     function renderPiecesGrid(filter = '') {
         const filtered = PIECE_TYPES.filter(t => !filter || t.includes(filter));
@@ -556,13 +560,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        quantity = Number(value);
+        quantity = normalizeQuantity(value);
         validateAddBtn();
     });
     $('qtyDisplay').addEventListener('blur', (event) => {
         const minimum = selectedServices.includes('أفرشة') ? 0.1 : 1;
-        quantity = Math.max(minimum, Number(event.target.value) || minimum);
-        event.target.value = quantity;
+        quantity = Math.max(minimum, normalizeQuantity(event.target.value) || minimum);
+        event.target.value = quantity.toFixed(1).replace(/\.0$/, '');
         validateAddBtn();
     });
 
@@ -598,11 +602,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Compteurs Quantité & Prix ---
     $('qtyMinus').addEventListener('click', () => {
         const step = selectedServices.includes('أفرشة') ? 0.1 : 1;
-        quantity = Math.max(step, quantity - step);
-        $('qtyDisplay').value = quantity;
+        quantity = Math.max(step, normalizeQuantity(quantity - step));
+        $('qtyDisplay').value = quantity.toFixed(1).replace(/\.0$/, '');
     });
     $('qtyPlus').addEventListener('click', () => {
-        quantity += selectedServices.includes('أفرشة') ? 0.1 : 1;
+        quantity = normalizeQuantity(quantity + (selectedServices.includes('أفرشة') ? 0.1 : 1));
         $('qtyDisplay').value = quantity.toFixed(1).replace(/\.0$/, '');
     });
     $('priceMinus').addEventListener('click', () => {
@@ -637,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedPiece || !selectedServices.length || !selectedColors.length) return;
 
         const minimumQuantity = selectedServices.includes('أفرشة') ? 0.1 : 1;
-        quantity = Math.max(minimumQuantity, Number($('qtyDisplay').value) || 0);
+        quantity = Math.max(minimumQuantity, normalizeQuantity($('qtyDisplay').value) || 0);
         if (quantity <= 0) {
             $('qtyDisplay').focus();
             return;
