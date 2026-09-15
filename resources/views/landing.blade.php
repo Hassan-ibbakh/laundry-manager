@@ -212,7 +212,17 @@
                 @foreach ($features as $f)
                 <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-shadow text-right">
                     <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 mr-0 ml-auto">
-                        <i data-lucide="{{ $f['icon'] }}" class="w-6 h-6"></i>
+                        @if ($f['icon'] === 'clipboard-list')
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M8 9h8M8 13h8M8 17h5"/></svg>
+                        @elseif ($f['icon'] === 'search')
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+                        @elseif ($f['icon'] === 'wallet')
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H19a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 7h15M16 13h4"/><circle cx="16" cy="13" r=".5" fill="currentColor"/></svg>
+                        @elseif ($f['icon'] === 'users')
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.8M18 14a5 5 0 0 1 3 4.5V20"/></svg>
+                        @else
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v11H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg>
+                        @endif
                     </div>
                     <h4 class="text-xl font-bold text-gray-900 mb-3">{{ $f['title'] }}</h4>
                     <p class="text-gray-600 leading-relaxed">{{ $f['desc'] }}</p>
@@ -241,7 +251,13 @@
                 @foreach ($steps as $s)
                 <div class="flex flex-col items-center text-center p-8 rounded-3xl bg-white border border-gray-100 shadow-sm">
                     <div class="w-16 h-16 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
-                        <i data-lucide="{{ $s['icon'] }}" class="w-8 h-8"></i>
+                        @if ($s['icon'] === 'clipboard-list')
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M8 9h8M8 13h8M8 17h5"/></svg>
+                        @elseif ($s['icon'] === 'play-circle')
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 5 4-5 4z" fill="currentColor" stroke="none"/></svg>
+                        @else
+                            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+                        @endif
                     </div>
                     <span class="text-blue-600 font-black text-2xl mb-2">{{ $s['step'] }}</span>
                     <h4 class="text-xl font-bold text-gray-900 mb-3">{{ $s['title'] }}</h4>
