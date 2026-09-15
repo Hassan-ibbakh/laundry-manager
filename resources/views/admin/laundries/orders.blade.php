@@ -46,7 +46,7 @@
                 @endphp
                 <tr class="hover:bg-blue-50/50 transition-colors">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-gray-700">{{ $order->order_number }}</td>
-                    <td class="px-4 py-3">{{ $order->client->name ?? '—' }}</td>
+                    <td class="px-4 py-3">{{ $order->client?->name ?: ($order->client?->phone ?: 'بدون بيانات') }}</td>
                     <td class="px-4 py-3">{{ $order->service }}</td>
                     <td class="px-4 py-3">{{ number_format((float) $order->price, 2) }}</td>
                     <td class="px-4 py-3">

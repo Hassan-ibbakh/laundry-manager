@@ -72,7 +72,7 @@
                     onclick="window.location.href = this.dataset.orderUrl"
                     onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.location.href = this.dataset.orderUrl; }">
                     <td class="px-4 py-3 font-mono text-xs font-bold text-gray-700">{{ $order->order_number }}</td>
-                    <td class="px-4 py-3">{{ $order->client->name ?? '—' }}</td>
+                    <td class="px-4 py-3">{{ $order->client?->name ?: ($order->client?->phone ?: 'بدون بيانات') }}</td>
                     <td class="px-4 py-3">
                         @php
                             $colors = [

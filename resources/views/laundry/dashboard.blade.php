@@ -50,7 +50,7 @@
                             @forelse($dailyOrders as $order)
                                 @php($statusClasses = ['received'=>'bg-amber-100 text-amber-800','cleaning'=>'bg-blue-100 text-blue-800','ready'=>'bg-emerald-100 text-emerald-800','delivered'=>'bg-slate-100 text-slate-700'])
                                 <tr class="hover:bg-slate-50/70 transition-colors">
-                                    <td class="px-5 py-4"><p class="font-mono font-black text-slate-900">{{ $order->order_number }}</p><p class="text-xs font-bold text-slate-500 mt-0.5">{{ $order->client->name ?? 'بدون اسم' }}</p></td>
+                                    <td class="px-5 py-4"><p class="font-mono font-black text-slate-900">{{ $order->order_number }}</p><p class="text-xs font-bold text-slate-500 mt-0.5">{{ $order->client?->name ?: ($order->client?->phone ?: 'بدون بيانات') }}</p></td>
                                     <td class="px-5 py-4 text-xs font-bold text-slate-600">{{ $order->items->sum('quantity') }} قطع</td>
                                     <td class="px-5 py-4 text-center"><span class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-black {{ $statusClasses[$order->status] ?? 'bg-slate-100' }}">{{ $statuses[$order->status]['label'] ?? $order->status }}</span></td>
                                     <td class="px-5 py-4 text-center"><span class="inline-block px-2.5 py-1 rounded-xl text-[11px] font-black {{ $order->payment_status === 'paid' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">{{ $order->payment_status === 'paid' ? 'مدفوع' : 'غير مدفوع' }}</span></td>
