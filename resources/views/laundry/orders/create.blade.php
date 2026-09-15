@@ -126,7 +126,7 @@
                             >
                                 −
                             </button>
-                            <input id="qtyDisplay" type="number" value="1" min="0.1" step="0.1" class="flex-1 min-w-0 bg-transparent text-center text-xl font-bold text-gray-800 outline-none">
+                            <input id="qtyDisplay" type="number" value="1" min="1" step="1" class="flex-1 min-w-0 bg-transparent text-center text-xl font-bold text-gray-800 outline-none">
                             <button 
                                 type="button"
                                 id="qtyPlus"
@@ -535,8 +535,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedServices.includes('أفرشة')) {
                 $('quantityLabel').textContent = 'عدد المترات';
                 $('priceLabel').textContent = 'السعر لكل متر';
-                $('qtyDisplay').min = '0.1';
-                $('qtyDisplay').step = '0.1';
+                $('qtyDisplay').min = '0.5';
+                $('qtyDisplay').step = '0.5';
                 $('priceInput').value = '20';
             } else {
                 $('quantityLabel').textContent = 'الكمية';
@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
         validateAddBtn();
     });
     $('qtyDisplay').addEventListener('blur', (event) => {
-        const minimum = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        const minimum = selectedServices.includes('أفرشة') ? 0.5 : 1;
         quantity = Math.max(minimum, normalizeQuantity(event.target.value) || minimum);
         event.target.value = quantity.toFixed(1).replace(/\.0$/, '');
         validateAddBtn();
@@ -601,12 +601,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Compteurs Quantité & Prix ---
     $('qtyMinus').addEventListener('click', () => {
-        const step = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        const step = selectedServices.includes('أفرشة') ? 0.5 : 1;
         quantity = Math.max(step, normalizeQuantity(quantity - step));
         $('qtyDisplay').value = quantity.toFixed(1).replace(/\.0$/, '');
     });
     $('qtyPlus').addEventListener('click', () => {
-        quantity = normalizeQuantity(quantity + (selectedServices.includes('أفرشة') ? 0.1 : 1));
+        quantity = normalizeQuantity(quantity + (selectedServices.includes('أفرشة') ? 0.5 : 1));
         $('qtyDisplay').value = quantity.toFixed(1).replace(/\.0$/, '');
     });
     $('priceMinus').addEventListener('click', () => {
@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('addToCartBtn').addEventListener('click', () => {
         if (!selectedPiece || !selectedServices.length || !selectedColors.length) return;
 
-        const minimumQuantity = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        const minimumQuantity = selectedServices.includes('أفرشة') ? 0.5 : 1;
         quantity = Math.max(minimumQuantity, normalizeQuantity($('qtyDisplay').value) || 0);
         if (quantity <= 0) {
             $('qtyDisplay').focus();
