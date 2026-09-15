@@ -531,11 +531,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (selectedServices.includes('أفرشة')) {
                 $('quantityLabel').textContent = 'عدد المترات';
                 $('priceLabel').textContent = 'السعر لكل متر';
+                $('qtyDisplay').min = '0.1';
                 $('qtyDisplay').step = '0.1';
                 $('priceInput').value = '20';
             } else {
                 $('quantityLabel').textContent = 'الكمية';
                 $('priceLabel').textContent = 'السعر المقترح (للقطعة)';
+                $('qtyDisplay').min = '1';
                 $('qtyDisplay').step = '1';
                 quantity = 1;
                 $('qtyDisplay').value = 1;
@@ -547,7 +549,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('qtyDisplay').addEventListener('input', (event) => {
-        quantity = Math.max(selectedServices.includes('أفرشة') ? 0.1 : 1, Number(event.target.value) || 0.1);
+        const value = event.target.value;
+        if (value === '') {
+            quantity = 0;
+            validateAddBtn();
+            return;
+        }
+
+        quantity = Number(value);
+        validateAddBtn();
+    });
+    $('qtyDisplay').addEventListener('blur', (event) => {
+        const minimum = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        quantity = Math.max(minimum, Number(event.target.value) || minimum);
         event.target.value = quantity;
         validateAddBtn();
     });
@@ -622,6 +636,13 @@ document.addEventListener('DOMContentLoaded', () => {
     $('addToCartBtn').addEventListener('click', () => {
         if (!selectedPiece || !selectedServices.length || !selectedColors.length) return;
 
+        const minimumQuantity = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        quantity = Math.max(minimumQuantity, Number($('qtyDisplay').value) || 0);
+        if (quantity <= 0) {
+            $('qtyDisplay').focus();
+            return;
+        }
+
         // Mémoriser le prix des services classiques.
         if (!selectedServices.includes('أفرشة')) {
             const key = getPriceKey();
@@ -646,6 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
         price = 20;
 
         $('qtyDisplay').value = 1;
+        $('qtyDisplay').min = '1';
+        $('qtyDisplay').step = '1';
         $('priceInput').value = price;
         $('pieceSearchInput').value = '';
         $('customColorInput').value = '';
