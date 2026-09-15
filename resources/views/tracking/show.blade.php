@@ -13,10 +13,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Cairo', 'sans-serif'] } } } }
-    </script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body { font-family: 'Cairo', sans-serif; }
@@ -44,8 +40,8 @@
 
     <div class="w-full max-w-md md:max-w-2xl lg:max-w-4xl">
 
-        <div class="text-center mb-6">
-            <div class="text-2xl md:text-3xl font-black text-blue-600 tracking-tight">Nadif</div>
+        <div class="mb-6 flex flex-col items-center text-center">
+            <img src="{{ asset('images/logo.png') }}" alt="Nadif" class="h-auto w-44 object-contain md:w-52" width="2058" height="764">
             <p class="text-gray-400 text-sm mt-1">تتبع الطلب</p>
         </div>
 

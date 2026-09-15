@@ -225,7 +225,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
             </div>
-            <h1 class="brand-title font-bold text-white mb-2">LaundryOS</h1>
+            <img src="{{ asset('images/logo.png') }}" alt="Nadif" class="mx-auto h-12 w-auto object-contain brightness-0 invert" width="220" height="70">
             <p class="brand-subtitle text-white/80">نظام إدارة المغاسل</p>
         </div>
 

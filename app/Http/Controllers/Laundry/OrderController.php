@@ -129,7 +129,7 @@ class OrderController extends Controller
                 'items.*.type'       => 'required|string|max:255',
                 'items.*.color'      => 'nullable|string|max:255',
                 'items.*.dimensions' => 'nullable|string|max:50',
-                'items.*.quantity'   => 'required|integer|min:1|max:10000',
+                'items.*.quantity'   => 'required|numeric|gt:0|max:10000',
                 'items.*.unit_price' => 'required|numeric|min:0|max:1000000',
             ], [
                 'items.required' => 'الرجاء إضافة قطعة واحدة على الأقل.',
@@ -186,24 +186,10 @@ class OrderController extends Controller
             // Calcul du total
             $total = 0;
             foreach ($validated['items'] as $index => &$item) {
-                if (in_array('أفرشة', $item['service'], true)) {
-                    $dimensions = (string) ($item['dimensions'] ?? '');
-
-                    if (!preg_match('/^([0-9]+(?:\.[0-9]+)?)x([0-9]+(?:\.[0-9]+)?)m$/', $dimensions, $matches)) {
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            "items.$index.dimensions" => 'الطول والعرض مطلوبان لخدمة الأفرشة.',
-                        ]);
-                    }
-
-                    $length = (float) $matches[1];
-                    $width = (float) $matches[2];
-                    if ($length <= 0 || $width <= 0) {
-                        throw \Illuminate\Validation\ValidationException::withMessages([
-                            "items.$index.dimensions" => 'أبعاد الأفرشة يجب أن تكون أكبر من صفر.',
-                        ]);
-                    }
-
-                    $item['unit_price'] = round($length * $width * 15, 2);
+                if (!in_array('أفرشة', $item['service'], true) && fmod((float) $item['quantity'], 1.0) !== 0.0) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        "items.$index.quantity" => 'الكمية يجب أن تكون رقماً صحيحاً لهذه الخدمة.',
+                    ]);
                 }
 
                 $total += $item['quantity'] * $item['unit_price'];

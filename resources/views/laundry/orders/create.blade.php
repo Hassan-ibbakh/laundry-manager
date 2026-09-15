@@ -115,27 +115,9 @@
             {{-- 4. Quantity & Price --}}
             <section class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 
-                {{-- حقل المقاسات (يظهر فقط إذا تم اختيار أفرشة) --}}
-                <div id="dimensionsContainer" class="hidden mb-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                    <h3 class="text-sm font-bold mb-3 text-indigo-900 flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-                        المقاس (الطول × العرض) بالمتر
-                    </h3>
-                    <div class="flex items-center gap-4">
-                        <div class="flex-1">
-                            <input type="number" id="dimLength" step="0.1" min="0" placeholder="الطول (مثال: 3)" class="w-full px-4 py-2 rounded-lg border border-indigo-200 text-center font-bold outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm text-lg">
-                        </div>
-                        <span class="font-bold text-indigo-400">X</span>
-                        <div class="flex-1">
-                            <input type="number" id="dimWidth" step="0.1" min="0" placeholder="العرض (مثال: 2.5)" class="w-full px-4 py-2 rounded-lg border border-indigo-200 text-center font-bold outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm text-lg">
-                        </div>
-                    </div>
-                    <p class="text-xs text-indigo-600 mt-2 font-bold">سيتم حساب السعر تلقائياً (15 درهم للمتر المربع)</p>
-                </div>
-
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <h3 class="text-lg font-bold mb-4 text-gray-900">الكمية</h3>
+                        <h3 id="quantityLabel" class="text-lg font-bold mb-4 text-gray-900">الكمية</h3>
                         <div class="flex items-center gap-4 bg-gray-100 p-2 rounded-xl">
                             <button 
                                 type="button"
@@ -144,7 +126,7 @@
                             >
                                 −
                             </button>
-                            <span id="qtyDisplay" class="flex-1 text-center text-xl font-bold text-gray-800">1</span>
+                            <input id="qtyDisplay" type="number" value="1" min="0.1" step="0.1" class="flex-1 min-w-0 bg-transparent text-center text-xl font-bold text-gray-800 outline-none">
                             <button 
                                 type="button"
                                 id="qtyPlus"
@@ -155,7 +137,7 @@
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold mb-4 text-gray-900">السعر المقترح (للقطعة)</h3>
+                        <h3 id="priceLabel" class="text-lg font-bold mb-4 text-gray-900">السعر المقترح (للقطعة)</h3>
                         <div class="flex items-center gap-4 bg-gray-100 p-2 rounded-xl">
                             <button 
                                 type="button"
@@ -168,7 +150,7 @@
                                 <input
                                     type="number"
                                     id="priceInput"
-                                    value="15"
+                                    value="20"
                                     min="1"
                                     step="1"
                                     inputmode="decimal"
@@ -442,11 +424,10 @@ document.addEventListener('DOMContentLoaded', () => {
         'مصلوح': 5,
         'تصبين+مصلوح': 15,
         'صباغة': 30,
-        'أفرشة': 15 // السعر الافتراضي للمتر المربع
+        'أفرشة': 20
     };
     const PRICE_RULES_VERSION = 'v2';
-    let price = 15;
-    const PRICE_PER_M2 = 15; // سعر المتر المربع للأفرشة
+    let price = 20;
     let isPaid = false;
     let cart = [];
 
@@ -546,12 +527,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.className = 'service-btn flex-1 py-3 px-2 sm:px-4 rounded-xl border-2 border-blue-600 bg-blue-50 text-blue-700 shadow-sm transition-all font-bold text-center text-sm sm:text-base';
             }
             
-            // إظهار أو إخفاء حقل المقاسات
+            // تحديث تسمية الكمية حسب نوع الخدمة
             if (selectedServices.includes('أفرشة')) {
-                $('dimensionsContainer').classList.remove('hidden');
-                calculateAfrichaPrice(); // حساب السعر مباشرة إذا كانت هناك أرقام مكتوبة مسبقاً
+                $('quantityLabel').textContent = 'عدد المترات';
+                $('priceLabel').textContent = 'السعر لكل متر';
+                $('qtyDisplay').step = '0.1';
+                $('priceInput').value = '20';
             } else {
-                $('dimensionsContainer').classList.add('hidden');
+                $('quantityLabel').textContent = 'الكمية';
+                $('priceLabel').textContent = 'السعر المقترح (للقطعة)';
+                $('qtyDisplay').step = '1';
+                quantity = 1;
+                $('qtyDisplay').value = 1;
             }
             
             checkLearnedPrice();
@@ -559,24 +546,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- دالة حساب سعر الأفرشة بناءً على الطول والعرض ---
-    function calculateAfrichaPrice() {
-        if (selectedServices.includes('أفرشة')) {
-            let l = parseFloat($('dimLength').value) || 0;
-            let w = parseFloat($('dimWidth').value) || 0;
-            if (l > 0 && w > 0) {
-                price = Math.round(l * w * PRICE_PER_M2);
-                $('priceInput').value = price;
-            }
-        }
-    }
-
-    $('dimLength').addEventListener('input', () => {
-        calculateAfrichaPrice();
-        validateAddBtn();
-    });
-    $('dimWidth').addEventListener('input', () => {
-        calculateAfrichaPrice();
+    $('qtyDisplay').addEventListener('input', (event) => {
+        quantity = Math.max(selectedServices.includes('أفرشة') ? 0.1 : 1, Number(event.target.value) || 0.1);
+        event.target.value = quantity;
         validateAddBtn();
     });
 
@@ -592,9 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkLearnedPrice() {
-        // إذا تم اختيار "أفرشة"، نعتمد على حساب الطول في العرض
+        // سعر الأفرشة يدخله المستخدم لكل متر.
         if (selectedServices.includes('أفرشة')) {
-            calculateAfrichaPrice();
+            price = Number($('priceInput').value) || 20;
             return;
         }
 
@@ -611,12 +583,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Compteurs Quantité & Prix ---
     $('qtyMinus').addEventListener('click', () => {
-        quantity = Math.max(1, quantity - 1);
-        $('qtyDisplay').textContent = quantity;
+        const step = selectedServices.includes('أفرشة') ? 0.1 : 1;
+        quantity = Math.max(step, quantity - step);
+        $('qtyDisplay').value = quantity;
     });
     $('qtyPlus').addEventListener('click', () => {
-        quantity += 1;
-        $('qtyDisplay').textContent = quantity;
+        quantity += selectedServices.includes('أفرشة') ? 0.1 : 1;
+        $('qtyDisplay').value = quantity.toFixed(1).replace(/\.0$/, '');
     });
     $('priceMinus').addEventListener('click', () => {
         price = Math.max(1, price - 1);
@@ -637,11 +610,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function validateAddBtn() {
         let isValid = selectedPiece && selectedServices.length > 0 && selectedColors.length > 0;
         
-        // إذا اختار العميل أفرشة، يجب إدخال الطول والعرض
+        // إذا اختار العميل أفرشة، يجب إدخال عدد المترات
         if (selectedServices.includes('أفرشة')) {
-            let l = parseFloat($('dimLength').value) || 0;
-            let w = parseFloat($('dimWidth').value) || 0;
-            if (l <= 0 || w <= 0) isValid = false;
+            if (quantity <= 0) isValid = false;
         }
 
         $('addToCartBtn').disabled = !isValid;
@@ -651,17 +622,10 @@ document.addEventListener('DOMContentLoaded', () => {
     $('addToCartBtn').addEventListener('click', () => {
         if (!selectedPiece || !selectedServices.length || !selectedColors.length) return;
 
-        // Mémoriser le prix (seulement si ce n'est pas Africha car Africha dépend des dimensions)
+        // Mémoriser le prix des services classiques.
         if (!selectedServices.includes('أفرشة')) {
             const key = getPriceKey();
             if (key) localStorage.setItem(key, String(price));
-        }
-
-        let itemDimensions = null;
-        if (selectedServices.includes('أفرشة')) {
-            let l = parseFloat($('dimLength').value) || 0;
-            let w = parseFloat($('dimWidth').value) || 0;
-            itemDimensions = `${l}x${w}m`;
         }
 
         cart.push({
@@ -669,7 +633,6 @@ document.addEventListener('DOMContentLoaded', () => {
             service: [...selectedServices],
             type: selectedPiece,
             color: selectedColors.join(' / '),
-            dimensions: itemDimensions, // حفظ الأبعاد
             quantity: quantity,
             unit_price: price,
             total_price: quantity * price
@@ -680,17 +643,15 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedPiece = '';
         selectedColors = [];
         quantity = 1;
-        price = 15;
+        price = 20;
 
-        $('qtyDisplay').textContent = 1;
+        $('qtyDisplay').value = 1;
         $('priceInput').value = price;
         $('pieceSearchInput').value = '';
         $('customColorInput').value = '';
         
-        // Reset Dimensions
-        $('dimLength').value = '';
-        $('dimWidth').value = '';
-        $('dimensionsContainer').classList.add('hidden');
+        $('quantityLabel').textContent = 'الكمية';
+        $('priceLabel').textContent = 'السعر المقترح (للقطعة)';
 
         document.querySelectorAll('.service-btn').forEach(b => {
             b.className = 'service-btn flex-1 py-3 px-2 sm:px-4 rounded-xl border-2 border-gray-100 bg-white text-gray-600 hover:border-gray-200 transition-all font-bold text-center text-sm sm:text-base';
@@ -751,12 +712,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                     <div>
                         <p class="font-bold text-gray-800">
-                            <span class="text-blue-600 ml-1 font-mono font-black">${item.quantity}x</span>
+                            <span class="text-blue-600 ml-1 font-mono font-black">${item.service.includes('أفرشة') ? `${item.quantity} متر` : `${item.quantity}x`}</span>
                             ${escapeHtml(item.type)} 
                             <span class="text-xs text-gray-500 font-normal">(${escapeHtml(item.color)})</span>
                             ${item.dimensions ? `<span class="inline-block mr-2 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-bold" dir="ltr">مقاس: ${escapeHtml(item.dimensions)}</span>` : ''}
                         </p>
-                        <p class="text-xs text-gray-400">${escapeHtml(item.service.join(' + '))} · ${item.unit_price} درهم للقطعة</p>
+                        <p class="text-xs text-gray-400">${escapeHtml(item.service.join(' + '))} · ${item.unit_price} درهم ${item.service.includes('أفرشة') ? 'للمتر' : 'للقطعة'}</p>
                     </div>
                 </div>
                 <p class="font-bold text-blue-600">${item.total_price} درهم</p>

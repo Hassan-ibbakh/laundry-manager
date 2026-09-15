@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -20,6 +21,14 @@
     </style>
 </head>
 <body class="min-h-screen bg-white text-gray-900 selection:bg-blue-100 selection:text-blue-900 font-sans" dir="rtl">
+
+    <header class="absolute inset-x-0 top-0 z-20 px-6 py-5">
+        <div class="mx-auto max-w-7xl">
+            <a href="{{ url('/') }}" aria-label="Nadif" class="inline-flex items-center transition hover:-translate-y-0.5">
+                <img src="{{ asset('images/logo.png') }}" alt="Nadif" class="h-auto w-40 object-contain sm:w-48" width="2058" height="764">
+            </a>
+        </div>
+    </header>
 
     <a
         href="https://wa.me/212633220045"

@@ -23,7 +23,7 @@
                 <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-950/40">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-5h6v5"/></svg>
                 </div>
-                <div><p class="font-black text-white">LaundryOS</p><p class="text-xs font-bold text-slate-400">مساحة الإدارة</p></div>
+                <div><img src="{{ asset('images/logo.png') }}" alt="Nadif" class="h-9 w-auto object-contain brightness-0 invert" width="220" height="70"><p class="text-xs font-bold text-slate-400">مساحة الإدارة</p></div>
             </div>
         </div>
 

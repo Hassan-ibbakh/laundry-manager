@@ -25,7 +25,7 @@
             @else
                 <div class="h-12 w-12 shrink-0 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg font-black shadow-lg shadow-blue-200">{{ strtoupper(substr($laundry->name ?? 'L', 0, 2)) }}</div>
             @endif
-            <div class="min-w-0"><p class="truncate font-black text-slate-900">{{ $laundry->name ?? 'LaundryOS' }}</p><p class="text-xs font-bold text-slate-400">إدارة المغسلة</p></div>
+            <div class="min-w-0"><img src="{{ asset('images/logo.png') }}" alt="Nadif" class="h-8 w-auto object-contain" width="220" height="70"><p class="text-xs font-bold text-slate-400">إدارة المغسلة</p></div>
         </div>
 
         <nav class="flex-1 space-y-2 px-3 py-5">
@@ -57,7 +57,7 @@
                     @else
                         <div class="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black">{{ strtoupper(substr($laundry->name ?? 'L', 0, 2)) }}</div>
                     @endif
-                    <p class="max-w-40 truncate font-black text-slate-900">{{ $laundry->name ?? 'LaundryOS' }}</p>
+                    <img src="{{ asset('images/logo.png') }}" alt="Nadif" class="h-8 w-auto object-contain" width="220" height="70">
                 </div>
                 <div class="hidden lg:block"><p class="text-sm font-bold text-slate-500">مرحباً، {{ $laundry->name ?? 'LaundryOS' }}</p></div>
                 <div class="flex items-center gap-2">
