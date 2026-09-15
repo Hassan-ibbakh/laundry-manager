@@ -692,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCartBadge() {
         $('itemsJson').value = JSON.stringify(cart);
-        const count = cart.reduce((s, i) => s + i.quantity, 0);
+        const count = cart.length;
         $('cartHeaderBadge').textContent = count;
         if (cart.length > 0 && currentStep === 'items') {
             $('cartHeaderBtn').classList.remove('hidden');
